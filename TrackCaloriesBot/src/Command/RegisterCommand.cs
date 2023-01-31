@@ -153,7 +153,7 @@ public class RegisterCommand : ICommand
                 await client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
                     text: "You are successfully registered!",
-                    replyMarkup: new ReplyKeyboardRemove());
+                    replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
                 break;
         }
     }

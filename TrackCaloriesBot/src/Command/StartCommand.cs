@@ -1,6 +1,5 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Service;
 
@@ -33,7 +32,7 @@ public class StartCommand : ICommand
             await client.SendTextMessageAsync(
              chatId: update.Message.Chat.Id,
              text: $"Hello again, {userData.Name}!",
-             replyMarkup: InlineKeyboards.UpdateInlineKeyboard);
+             replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
         }
     }
 }

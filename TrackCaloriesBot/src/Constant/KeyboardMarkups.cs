@@ -4,6 +4,30 @@ namespace TrackCaloriesBot.Constant;
 
 public static class KeyboardMarkups
 {
+    public static ReplyKeyboardMarkup MenuKeyboardMarkup = new(new[]
+    {
+        new KeyboardButton[] { "New record", "Summary for today" },
+        new KeyboardButton[] { "My progress", "Info about me" },
+    }){
+        ResizeKeyboard = true
+    };
+    public static ReplyKeyboardMarkup NewRecordKeyboardMarkup = new(new[]
+    {
+        new KeyboardButton[] { "Breakfast", "Lunch" },
+        new KeyboardButton[] { "Dinner", "Snack" },
+        new KeyboardButton[] { "Water", "Exercise" },
+        new KeyboardButton[] { "Back" }
+    }){
+        ResizeKeyboard = true
+    };
+    public static ReplyKeyboardMarkup MealKeyboardMarkup = new(new[]
+    {
+        new KeyboardButton[] { "Custom food", "Search food" },
+        new KeyboardButton[] { "From saved ones", "By barcode" },
+        new KeyboardButton[] { "Back" }
+    }){
+        ResizeKeyboard = true
+    };
     public static ReplyKeyboardMarkup GenderKeyboardMarkup = new(new[]
     {
         new KeyboardButton[] { "Female", "Male️" },
@@ -21,4 +45,5 @@ public static class KeyboardMarkups
         new KeyboardButton[] { "High" },
         new KeyboardButton[] { "Very high" },
     });
+    
 }

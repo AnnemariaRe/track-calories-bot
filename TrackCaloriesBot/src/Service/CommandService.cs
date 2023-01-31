@@ -27,25 +27,24 @@ public class CommandService : ICommandService
 
         if (update is { Type: UpdateType.CallbackQuery })
         {
-            if (callbackQuery.Data.Contains("/register"))
+            if (callbackQuery.Data.Contains(Commands.RegisterCommand))
             {
                 await ExecuteCommand(Commands.RegisterCommand, update, client);
             }
-            if (callbackQuery.Data.Contains("/show"))
+        }
+        
+        if (messageText != null)
+        {
+            if (messageText.Contains(Commands.StartCommand))
+            {
+                await ExecuteCommand(Commands.StartCommand, update, client);
+            }
+            if (messageText.Contains(Commands.ShowUserInfoCommand))
             {
                 await ExecuteCommand(Commands.ShowUserInfoCommand, update, client);
             }
-            // if (callbackQuery.Data.Contains("/update"))
-            // {
-            //     await ExecuteCommand(Commands.RegisterCommand, update, client);
-            // }
         }
-        
-        if (messageText != null && messageText.Contains(Commands.StartCommand))
-        {
-            await ExecuteCommand(Commands.StartCommand, update, client);
-        }
-        
+
         switch (_lastCommand?.Key)
         {
             case Commands.RegisterCommand:

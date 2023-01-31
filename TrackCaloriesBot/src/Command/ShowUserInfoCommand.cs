@@ -19,13 +19,14 @@ public class ShowUserInfoCommand : ICommand
     
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
-        var userData = await _userService.GetUser(update.CallbackQuery.Message.Chat.Id);
+        var userData = await _userService.GetUser(update.Message.Chat.Id);
 
         if (userData != null)
         {
             await client.SendTextMessageAsync(
-                chatId: update.CallbackQuery.Message.Chat.Id,
+                chatId: update.Message.Chat.Id,
                 text: BeautifulOutput(userData),
+                replyMarkup: KeyboardMarkups.MenuKeyboardMarkup,
                 parseMode: ParseMode.Html);
         }
     }
