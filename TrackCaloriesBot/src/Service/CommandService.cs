@@ -27,7 +27,7 @@ public class CommandService : ICommandService
 
         if (update is { Type: UpdateType.CallbackQuery })
         {
-            if (callbackQuery.Data.Contains(Commands.RegisterCommand))
+            if (callbackQuery?.Data != null && callbackQuery.Data.Contains(Commands.RegisterCommand))
             {
                 await ExecuteCommand(Commands.RegisterCommand, update, client);
             }
@@ -42,6 +42,10 @@ public class CommandService : ICommandService
             if (messageText.Contains(Commands.ShowUserInfoCommand))
             {
                 await ExecuteCommand(Commands.ShowUserInfoCommand, update, client);
+            }
+            if (messageText.Contains(Commands.SummaryCommand))
+            {
+                await ExecuteCommand(Commands.SummaryCommand, update, client);
             }
         }
 
