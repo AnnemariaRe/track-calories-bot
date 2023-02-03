@@ -32,6 +32,8 @@ public class Startup
         services.AddSingleton<ICommand, StartCommand>();
         services.AddSingleton<ICommand, RegisterCommand>();
         services.AddSingleton<ICommand, ShowUserInfoCommand>();
+        services.AddSingleton<ICommand, SummaryCommand>();
+        services.AddSingleton<ICommand, NewRecordCommand>();
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)

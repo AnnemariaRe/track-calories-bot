@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace TrackCaloriesBot.Entity;
 
 public class DayTotalData

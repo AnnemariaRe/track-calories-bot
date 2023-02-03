@@ -4,6 +4,9 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Constant;
+using TrackCaloriesBot.Entity;
+using TrackCaloriesBot.Enums;
+
 
 namespace TrackCaloriesBot.Service;
 
@@ -33,33 +36,36 @@ public class CommandService : ICommandService
             }
         }
         
-        if (messageText != null)
+        switch (messageText)
         {
-            if (messageText.Contains(Commands.StartCommand))
-            {
+            case Commands.StartCommand:
                 await ExecuteCommand(Commands.StartCommand, update, client);
-            }
-            if (messageText.Contains(Commands.ShowUserInfoCommand))
-            {
+                break;
+            case Commands.ShowUserInfoCommand:
                 await ExecuteCommand(Commands.ShowUserInfoCommand, update, client);
-            }
-            if (messageText.Contains(Commands.SummaryCommand))
-            {
+                break;
+            case Commands.SummaryCommand:
                 await ExecuteCommand(Commands.SummaryCommand, update, client);
-            }
+                break;
+            case Commands.NewRecordCommand:
+                await ExecuteCommand(Commands.NewRecordCommand, update, client);
+                break;
         }
+        
 
         switch (_lastCommand?.Key)
         {
             case Commands.RegisterCommand:
-            {
                 await ExecuteCommand(Commands.RegisterCommand, update, client);
                 break;
-            }
-            case null:
-            {
+            case Commands.NewRecordCommand:
+                if (messageText is "Breakfast" or "Lunch" or "Dinner" or "Snack")
+                {
+                    await ExecuteCommand(Commands.NewRecordCommand, update, client);
+                }
                 break;
-            }
+            case null:
+                break;
         }
     }
 

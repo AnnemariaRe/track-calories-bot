@@ -15,15 +15,15 @@ public static class KeyboardMarkups
     {
         new KeyboardButton[] { "Breakfast", "Lunch" },
         new KeyboardButton[] { "Dinner", "Snack" },
-        new KeyboardButton[] { "Water", "Exercise" },
+        new KeyboardButton[] { "Water" },
         new KeyboardButton[] { "Back" }
     }){
         ResizeKeyboard = true
     };
     public static ReplyKeyboardMarkup MealKeyboardMarkup = new(new[]
     {
-        new KeyboardButton[] { "Custom food", "Search food" },
-        new KeyboardButton[] { "From saved ones", "By barcode" },
+        new KeyboardButton[] { "Search products", "Enter manually" },
+        new KeyboardButton[] { "Scan a barcode", "Get from your favourites" },
         new KeyboardButton[] { "Back" }
     }){
         ResizeKeyboard = true
