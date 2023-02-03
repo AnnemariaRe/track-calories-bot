@@ -22,4 +22,5 @@ public class User
     public float ProjectedProgress { get; set; }
     public ActivityLevel? ActivityLevel { get; set; }
     public int RegistrationStage { get; set; }
+    public ICollection<DayTotalData> DayTotalData { get; set; }
 }
