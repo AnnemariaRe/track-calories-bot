@@ -1,0 +1,95 @@
+using Microsoft.EntityFrameworkCore;
+using Telegram.Bot.Types;
+using TrackCaloriesBot.Context;
+using TrackCaloriesBot.Entity;
+using TrackCaloriesBot.Enums;
+
+namespace TrackCaloriesBot.Service;
+
+public class DayTotalDataService : IDayTotalDataService
+{
+    private readonly ApplicationDbContext _context;
+    private readonly MealDataService _mealDataService;
+
+    public DayTotalDataService(ApplicationDbContext context, MealDataService mealDataService)
+    {
+        _context = context;
+        _mealDataService = mealDataService;
+    }
+    
+    public async Task<DayTotalData> AddNewDayTotalData(Update update)
+    {
+        var messageDate = update.Message.Date;
+        
+        var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
+            x.Date.ToShortDateString() == messageDate.ToShortDateString());
+
+        if (dayTotalData != null) return dayTotalData;
+
+        var newDayTotalData = new DayTotalData
+        {
+            dayId = messageDate.GetHashCode(),
+            tgId = update.Message.Chat.Id,
+            MealData = null,
+            Water = 0,
+            Date = messageDate.Date
+        };
+        
+        var result = await _context.DayTotalData.AddAsync(newDayTotalData);
+        await _context.SaveChangesAsync();
+
+        return result.Entity;
+    }
+
+    public async Task<DayTotalData?> GetDayTotalData(Update update)
+    {
+        var messageDate = update.Message.Date;
+        var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
+            x.Date.ToShortDateString() == messageDate.ToShortDateString());
+
+        return dayTotalData;
+    }
+
+    public async Task AddWater(Update update)
+    {
+        var dayTotalData = GetDayTotalData(update);
+        if (dayTotalData.Result is not null)
+        {
+            var check = float.TryParse(update.Message.Text, out var x);
+            if (check && x is > 0 and < 10)
+            {
+                dayTotalData.Result.Water += x; 
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+
+    public async Task AddNewMealType(Update update)
+    {
+        var dayTotalData = GetDayTotalData(update);
+        if (dayTotalData.Result is not null)
+        {
+            if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Breakfast) == null &&
+                update.Message.Text == "Breakfast")
+            {
+                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+            } 
+            if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Lunch) == null &&
+                update.Message.Text == "Lunch")
+            {
+                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+            }
+            if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Dinner) == null &&
+                update.Message.Text == "Dinner")
+            {
+                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+            }
+            if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Snack) == null &&
+                update.Message.Text == "Snack")
+            {
+                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+            }
+        }
+        await _context.SaveChangesAsync();
+    }
+}
