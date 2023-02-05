@@ -29,11 +29,17 @@ public class Startup
         services.AddSingleton<Bot>();
         services.AddSingleton<ICommandService, CommandService>();
         services.AddSingleton<IUserService, UserService>();
+        services.AddSingleton<IDayTotalDataService, DayTotalDataService>();
+        services.AddSingleton<IMealDataService, MealDataService>();
+        services.AddSingleton<IProductService, ProductService>();
         services.AddSingleton<ICommand, StartCommand>();
         services.AddSingleton<ICommand, RegisterCommand>();
         services.AddSingleton<ICommand, ShowUserInfoCommand>();
         services.AddSingleton<ICommand, SummaryCommand>();
         services.AddSingleton<ICommand, NewRecordCommand>();
+        services.AddSingleton<ICommand, AddProductToMealCommand>();
+        services.AddSingleton<ICommand, AddWaterCommand>();
+        services.AddSingleton<ICommand, BackCommand>();
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)

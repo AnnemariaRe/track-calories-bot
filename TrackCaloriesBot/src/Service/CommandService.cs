@@ -50,6 +50,9 @@ public class CommandService : ICommandService
             case Commands.AddWaterCommand:
                 await ExecuteCommand(Commands.AddWaterCommand, update, client);
                 break;
+            case Commands.BackCommand:
+                await ExecuteCommand(Commands.BackCommand, update, client);
+                break;
         }
 
         switch (_lastCommand?.Key)
