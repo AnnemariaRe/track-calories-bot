@@ -10,14 +10,13 @@ public class MealDataService : IMealDataService
 {
     private readonly ApplicationDbContext _context;
 
-    public MealDataService(ApplicationDbContext context) 
+    public MealDataService(ApplicationDbContext context)
     {
         _context = context;
     }
     
     public async Task<MealData> AddNewMealData(Update update)
     {
-        var messageDate = update.Message.Date;
         var type = update.Message.Text switch
         {
             "Breakfast" => MealType.Breakfast,
@@ -26,23 +25,24 @@ public class MealDataService : IMealDataService
             "Snack" => MealType.Snack
         };
         
+        var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
-            x.Date.ToShortDateString() == messageDate.ToShortDateString());
-
-        var mealData = await _context.MealData.FirstOrDefaultAsync(x =>
-            x.dayId == dayTotalData.dayId && x.MealType == type);
+            x.Date == messageDate);
         
+        var mealData = await _context.MealData.FirstOrDefaultAsync(x =>
+                    dayTotalData != null && x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == type);
+
         if (mealData != null) return mealData;
 
         var newMealData = new MealData
         {
-            mealId = Guid.NewGuid(),
-            dayId = dayTotalData.dayId,
+            MealId = Guid.NewGuid(),
             MealType = type,
             DayTotalData = dayTotalData,
             Products = null
         };
-        
+
+        dayTotalData?.MealData?.Add(newMealData);
         var result = await _context.MealData.AddAsync(newMealData);
         await _context.SaveChangesAsync();
 
@@ -51,7 +51,6 @@ public class MealDataService : IMealDataService
 
     public async Task<MealData?> GetMealData(Update update)
     {
-        var messageDate = update.Message.Date;
         var type = update.Message.Text switch
         {
             "Breakfast" => MealType.Breakfast,
@@ -60,12 +59,13 @@ public class MealDataService : IMealDataService
             "Snack" => MealType.Snack
         };
         
+        var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
-            x.Date.ToShortDateString() == messageDate.ToShortDateString());
+            x.Date == messageDate);
 
         var mealData = await _context.MealData.FirstOrDefaultAsync(x =>
-            x.dayId == dayTotalData.dayId && x.MealType == type);
-
+            dayTotalData != null && x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == type);
+        
         return mealData;
     }
 

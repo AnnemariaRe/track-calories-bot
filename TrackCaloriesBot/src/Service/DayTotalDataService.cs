@@ -9,31 +9,34 @@ namespace TrackCaloriesBot.Service;
 public class DayTotalDataService : IDayTotalDataService
 {
     private readonly ApplicationDbContext _context;
-    private readonly MealDataService _mealDataService;
+    private readonly IMealDataService _mealDataService;
+    private readonly IUserService _userService;
 
-    public DayTotalDataService(ApplicationDbContext context, MealDataService mealDataService)
+    public DayTotalDataService(ApplicationDbContext context, IMealDataService mealDataService, IUserService userService)
     {
         _context = context;
         _mealDataService = mealDataService;
+        _userService = userService;
     }
     
     public async Task<DayTotalData> AddNewDayTotalData(Update update)
     {
-        var messageDate = update.Message.Date;
-        
+        var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
+
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
-            x.Date.ToShortDateString() == messageDate.ToShortDateString());
+            x.Date == messageDate);
 
         if (dayTotalData != null) return dayTotalData;
 
         var newDayTotalData = new DayTotalData
         {
-            dayId = messageDate.GetHashCode(),
-            tgId = update.Message.Chat.Id,
+            DayId = messageDate.GetHashCode(),
             MealData = null,
             Water = 0,
-            Date = messageDate.Date
+            Date = messageDate
         };
+
+        await _userService.AddDayTotalData(dayTotalData, update);
         
         var result = await _context.DayTotalData.AddAsync(newDayTotalData);
         await _context.SaveChangesAsync();
@@ -41,27 +44,21 @@ public class DayTotalDataService : IDayTotalDataService
         return result.Entity;
     }
 
-    public async Task<DayTotalData?> GetDayTotalData(Update update)
+    public async Task<DayTotalData> GetDayTotalData(Update update)
     {
-        var messageDate = update.Message.Date;
+        var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
+        
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
-            x.Date.ToShortDateString() == messageDate.ToShortDateString());
-
+                x.Date == messageDate);
+        
         return dayTotalData;
     }
 
-    public async Task AddWater(Update update)
+    public async Task AddWater(Update update, float x)
     {
         var dayTotalData = GetDayTotalData(update);
-        if (dayTotalData.Result is not null)
-        {
-            var check = float.TryParse(update.Message.Text, out var x);
-            if (check && x is > 0 and < 10)
-            {
-                dayTotalData.Result.Water += x; 
-                await _context.SaveChangesAsync();
-            }
-        }
+        dayTotalData.Result.Water += x; 
+        await _context.SaveChangesAsync();
     }
 
     public async Task AddNewMealType(Update update)

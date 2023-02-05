@@ -1,4 +1,5 @@
 using Telegram.Bot.Types;
+using TrackCaloriesBot.Entity;
 using User = TrackCaloriesBot.Entity.User;
 
 namespace TrackCaloriesBot.Service;
@@ -17,6 +18,7 @@ public interface IUserService
     public Task AddGoalWeight(Update update);
     public Task AddProjectedProgress(Update update);
     public Task AddActivityLevel(Update update);
+    public Task AddDayTotalData(DayTotalData? dayTotalData, Update update);
 
 
 }

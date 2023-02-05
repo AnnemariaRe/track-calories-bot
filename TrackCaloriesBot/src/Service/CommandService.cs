@@ -4,9 +4,6 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Entity;
-using TrackCaloriesBot.Enums;
-
 
 namespace TrackCaloriesBot.Service;
 
@@ -15,7 +12,7 @@ public class CommandService : ICommandService
     private readonly List<ICommand> _commands;
     private ICommand? _lastCommand;
     
-    public CommandService(IServiceProvider serviceProvider, IUserService userService)
+    public CommandService(IServiceProvider serviceProvider)
     {
         _commands = serviceProvider.GetServices<ICommand>().ToList();
     }
@@ -50,8 +47,10 @@ public class CommandService : ICommandService
             case Commands.NewRecordCommand:
                 await ExecuteCommand(Commands.NewRecordCommand, update, client);
                 break;
+            case Commands.AddWaterCommand:
+                await ExecuteCommand(Commands.AddWaterCommand, update, client);
+                break;
         }
-        
 
         switch (_lastCommand?.Key)
         {
@@ -62,6 +61,12 @@ public class CommandService : ICommandService
                 if (messageText is "Breakfast" or "Lunch" or "Dinner" or "Snack")
                 {
                     await ExecuteCommand(Commands.NewRecordCommand, update, client);
+                }
+                break;
+            case Commands.AddWaterCommand:
+                if (messageText != Commands.AddWaterCommand)
+                {
+                    await ExecuteCommand(Commands.AddWaterCommand, update, client);
                 }
                 break;
             case null:

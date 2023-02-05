@@ -18,7 +18,6 @@ public class AddProductToMealCommand : ICommand
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
         var message = update.Type is UpdateType.CallbackQuery ? update.CallbackQuery?.Message! : update.Message!;
-        
         var userData = await _userService.GetUser(message.Chat.Id)!;
         
         if (userData is null)

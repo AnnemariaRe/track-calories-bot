@@ -9,9 +9,8 @@ public class MealData
     {
     }
 
-    [Key] public Guid mealId { get; set; }
-    public long dayId { get; set; }
+    [Key] public Guid MealId { get; set; }
     public MealType MealType { get; set; }
-    public DayTotalData DayTotalData { get; set; }
+    public DayTotalData? DayTotalData { get; set; }
     public ICollection<Product>? Products { get; set; }
 }

@@ -9,4 +9,5 @@ public static class Commands
     public const string AddProductToMealCommand = "Add product";
     public const string SummaryCommand = "Summary for today";
     public const string ProgressCommand = "My progress";
+    public const string AddWaterCommand = "Water";
 }

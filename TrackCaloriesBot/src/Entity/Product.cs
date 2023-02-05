@@ -10,7 +10,6 @@ public class Product
     }
 
     [Key] public long ProductId { get; set; }
-    public long mealId { get; set; }
     public string Name { get; set; }
     public ServingType ServingType { get; set; }
     public int ServingAmount { get; set; }

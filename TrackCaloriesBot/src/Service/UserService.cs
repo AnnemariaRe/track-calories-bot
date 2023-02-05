@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Extensions;
-using Telegram.Bot;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
+using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 using User = TrackCaloriesBot.Entity.User;
 
@@ -182,6 +181,16 @@ public class UserService : IUserService
                 "High" => ActivityLevel.High,
                 "Very high" => ActivityLevel.VeryHigh,
             };
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task AddDayTotalData(DayTotalData? dayTotalData, Update update)
+    {
+        var user = GetUser(update.Message.Chat.Id);
+        if (user?.Result is not null)
+        {
+            user.Result.DayTotalData.Add(dayTotalData);
             await _context.SaveChangesAsync();
         }
     }
