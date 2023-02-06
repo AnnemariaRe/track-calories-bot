@@ -31,8 +31,8 @@ public class AddProductToMealCommand : ICommand
         {
             await client.SendTextMessageAsync(
                 chatId: update.Message.Chat.Id,
-                text: "Choose record type",
-                replyMarkup: KeyboardMarkups.NewRecordKeyboardMarkup);
+                text: "Choose how to add the product",
+                replyMarkup: KeyboardMarkups.MealKeyboardMarkup);
         }
     }
 }

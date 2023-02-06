@@ -63,7 +63,7 @@ public class CommandService : ICommandService
             case Commands.NewRecordCommand:
                 if (messageText is "Breakfast" or "Lunch" or "Dinner" or "Snack")
                 {
-                    await ExecuteCommand(Commands.NewRecordCommand, update, client);
+                    await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
                 }
                 break;
             case Commands.AddWaterCommand:
