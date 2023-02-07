@@ -12,5 +12,21 @@ public static class InlineKeyboards
     {
         new[] { InlineKeyboardButton.WithCallbackData("Show user info", "/show") },
     });
+    public static InlineKeyboardMarkup ServingTypeInlineKeyboard = new InlineKeyboardMarkup(new[]
+    {
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("grams", "Grams"),
+            InlineKeyboardButton.WithCallbackData("milliliters", "Milliliters")
+        },
+    });
+    public static InlineKeyboardMarkup YesOrNoInlineKeyboard = new InlineKeyboardMarkup(new[]
+    {
+        new[]
+        {
+            InlineKeyboardButton.WithCallbackData("yes", "yes"),
+            InlineKeyboardButton.WithCallbackData("no", "no")
+        },
+    });
     
 }

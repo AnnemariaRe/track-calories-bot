@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Service.Interfaces;
@@ -50,14 +51,24 @@ public class AddProductConversationService : IAddProductConversationService
 
     public async Task IncrementStage(Update update)
     {
-        if (update.Message?.Text != null)
+        Task<AddProductConversation?>? conversation = null;
+        switch (update.Type)
         {
-            var conversation = GetAddProductConversation(update.Message.Chat.Id);
-            if (conversation?.Result is not null)
+            case UpdateType.CallbackQuery when update.CallbackQuery is { Data: { }, Message: { } }:
             {
-                conversation.Result.ConversationStage++;
-                await _context.SaveChangesAsync();
+                conversation = GetAddProductConversation(update.CallbackQuery.Message.Chat.Id);
+                break;
             }
+            case UpdateType.Message when update.Message != null:
+            {
+                conversation = GetAddProductConversation(update.Message.Chat.Id);
+                break;
+            }
+        }
+        if (conversation?.Result is not null)
+        {
+         conversation.Result.ConversationStage++;
+         await _context.SaveChangesAsync();
         }
     }
     

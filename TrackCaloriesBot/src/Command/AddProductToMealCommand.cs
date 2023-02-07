@@ -30,30 +30,21 @@ public class AddProductToMealCommand : ICommand
         if (userData is null)
         {
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Welcome to the Track Calories Bot!",
                 replyMarkup: InlineKeyboards.StartInlineKeyboard);
         }
         else
         {
             if (await _dayTotalDataService.GetDayTotalData(update) is null)
-            {
                 await _dayTotalDataService.AddNewDayTotalData(update);
-            }
-            try
-            {
-                await _conversationService.CreateAddProductConversation(update);
-                await _mealDataService.AddNewMealData(update);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
             
-            
+            await _conversationService.CreateAddProductConversation(update);
+            await _mealDataService.AddNewMealData(update);
+            await _dayTotalDataService.AddNewMealType(update);
+
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Choose how to add the product",
                 replyMarkup: KeyboardMarkups.MealKeyboardMarkup);
         }

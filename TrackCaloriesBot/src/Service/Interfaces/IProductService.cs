@@ -7,7 +7,6 @@ public interface IProductService
 {
     public Task<Product> CreateProduct(Update update);
     public Task<Product?>? GetProduct(long id);
-    public Task AddName(Update update, long id);
     public Task AddServingUnit(Update update, long id);
     public Task AddServingAmount(Update update, long id);
     public Task AddCalorieAmount(Update update, long id);

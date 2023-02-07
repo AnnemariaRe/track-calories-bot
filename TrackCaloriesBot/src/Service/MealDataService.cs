@@ -50,17 +50,11 @@ public class MealDataService : IMealDataService
         return result.Entity;
     }
 
-    public async Task<MealData?> GetMealData(Update update)
+    public async Task<MealData?> GetMealData(Update? update, MealType mealType)
     {
-        var type = update.Message.Text switch
-        {
-            "Breakfast" => MealType.Breakfast,
-            "Lunch" => MealType.Lunch,
-            "Dinner" => MealType.Dinner,
-            "Snack" => MealType.Snack
-        };
+        var type = mealType;
         
-        var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
+        var messageDate = update?.Message?.Date.ToString("dd.MM.yyyy");
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
             x.Date == messageDate);
 
@@ -74,7 +68,7 @@ public class MealDataService : IMealDataService
     {
         if (product != null)
         {
-            var mealData = await GetMealData(update);
+            var mealData = await GetMealData(update, product.MealData.MealType);
             mealData?.Products?.Add(product);
             await _context.SaveChangesAsync();
         }

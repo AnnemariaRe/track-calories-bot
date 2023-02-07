@@ -27,7 +27,7 @@ public class AddWaterCommand : ICommand
         if (userData is null)
         {
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Welcome to the Track Calories Bot!",
                 replyMarkup: InlineKeyboards.StartInlineKeyboard);
             return;
@@ -36,7 +36,7 @@ public class AddWaterCommand : ICommand
         if (message.Text == Key)
         {
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Write amount in L",
                 replyMarkup: new ReplyKeyboardRemove());
         }

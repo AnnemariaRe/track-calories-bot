@@ -12,7 +12,7 @@ public class CommandService : ICommandService
 {
     private readonly List<ICommand> _commands;
     private ICommand? _lastCommand;
-    
+
     public CommandService(IServiceProvider serviceProvider)
     {
         _commands = serviceProvider.GetServices<ICommand>().ToList();
@@ -54,6 +54,9 @@ public class CommandService : ICommandService
             case Commands.BackCommand:
                 await ExecuteCommand(Commands.BackCommand, update, client);
                 break;
+            case Commands.EnterManuallyCommand:
+                await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
+                break;
             case "Breakfast":
                 await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
                 break;
@@ -85,7 +88,11 @@ public class CommandService : ICommandService
                     await ExecuteCommand(Commands.AddWaterCommand, update, client);
                 }
                 break;
-            case null:
+            case Commands.EnterManuallyCommand:
+                if (messageText != Commands.EnterManuallyCommand || callbackQuery.Data != Commands.EnterManuallyCommand)
+                {
+                    await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
+                }
                 break;
         }
     }

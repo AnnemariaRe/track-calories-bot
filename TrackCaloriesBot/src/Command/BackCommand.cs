@@ -27,14 +27,14 @@ public class BackCommand : ICommand
         if (userData is null)
         {
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Welcome to the Track Calories Bot!",
                 replyMarkup: InlineKeyboards.StartInlineKeyboard);
         }
         else
         {
-            var conversaion = await _conversationService.GetAddProductConversation(message.Chat.Id)!;
-            if (conversaion is not null) await _conversationService.DeleteAddProductConversation(conversaion);
+            var conversation = await _conversationService.GetAddProductConversation(message.Chat.Id)!;
+            if (conversation is not null) await _conversationService.DeleteAddProductConversation(conversation);
             
             
             await client.SendTextMessageAsync(
