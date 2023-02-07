@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Service;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Controller;
 

@@ -3,6 +3,7 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
+using TrackCaloriesBot.Service.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 
 namespace TrackCaloriesBot.Service;
@@ -35,7 +36,7 @@ public class UserService : IUserService
             GoalWeight = 0,
             Goal = null,
             ActivityLevel = null,
-            RegistrationStage = 1
+            RegistrationStage = 1,
         };
 
         var result = await _context.Users.AddAsync(newUser);
@@ -188,7 +189,7 @@ public class UserService : IUserService
     public async Task AddDayTotalData(DayTotalData? dayTotalData, Update update)
     {
         var user = GetUser(update.Message.Chat.Id);
-        if (user?.Result is not null)
+        if (user?.Result is not null && dayTotalData is not null)
         {
             user.Result.DayTotalData.Add(dayTotalData);
             await _context.SaveChangesAsync();

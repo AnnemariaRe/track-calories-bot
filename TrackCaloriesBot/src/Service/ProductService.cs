@@ -1,5 +1,6 @@
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
 

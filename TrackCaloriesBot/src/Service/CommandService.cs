@@ -4,6 +4,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Constant;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
 
@@ -52,6 +53,18 @@ public class CommandService : ICommandService
                 break;
             case Commands.BackCommand:
                 await ExecuteCommand(Commands.BackCommand, update, client);
+                break;
+            case "Breakfast":
+                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
+                break;
+            case "Lunch":
+                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
+                break;
+            case "Dinner":
+                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
+                break;
+            case "Snack":
+                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
                 break;
         }
 

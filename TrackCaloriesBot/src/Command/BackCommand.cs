@@ -3,6 +3,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Service;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
@@ -10,10 +11,12 @@ public class BackCommand : ICommand
 {
     public string Key => Commands.BackCommand;
     private readonly IUserService _userService;
+    private readonly IAddProductConversationService _conversationService;
     
-    public BackCommand(IUserService userService)
+    public BackCommand(IUserService userService, IAddProductConversationService conversationService)
     {
         _userService = userService;
+        _conversationService = conversationService;
     }
     
     public async Task Execute(Update? update, ITelegramBotClient client)
@@ -30,10 +33,14 @@ public class BackCommand : ICommand
         }
         else
         {
+            var conversaion = await _conversationService.GetAddProductConversation(message.Chat.Id)!;
+            if (conversaion is not null) await _conversationService.DeleteAddProductConversation(conversaion);
+            
+            
             await client.SendTextMessageAsync(
-                chatId: message.Chat.Id,
-                text: "Choose action",
-                replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
+            chatId: message.Chat.Id,
+            text: "Choose action",
+            replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
         }
     }
 }

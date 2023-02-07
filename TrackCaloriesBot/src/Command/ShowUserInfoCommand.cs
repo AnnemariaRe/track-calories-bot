@@ -4,6 +4,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Service;
+using TrackCaloriesBot.Service.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 
 namespace TrackCaloriesBot.Command;

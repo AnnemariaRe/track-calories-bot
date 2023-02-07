@@ -2,6 +2,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Service;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 

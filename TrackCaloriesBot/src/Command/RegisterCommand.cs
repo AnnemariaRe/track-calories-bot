@@ -4,6 +4,7 @@ using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Service;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
