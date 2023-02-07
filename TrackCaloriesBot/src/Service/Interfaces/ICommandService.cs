@@ -1,7 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Service.Interfaces;
 
 public interface ICommandService
 {

@@ -1,8 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Service.Interfaces;
 
 public interface IDayTotalDataService
 {
