@@ -9,5 +9,6 @@ public interface IAddProductConversationService
     public Task<AddProductConversation?>? GetAddProductConversation(long tgId);
     public Task IncrementStage(Update update);
     public Task AddCommandName(Update update);
+    public Task AddProductId(Update update, long id);
     public Task DeleteAddProductConversation(AddProductConversation conversation);
 }

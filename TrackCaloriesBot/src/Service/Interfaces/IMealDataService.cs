@@ -7,5 +7,5 @@ public interface IMealDataService
 {
     public Task<MealData> AddNewMealData(Update update);
     public Task<MealData?> GetMealData(Update update);
-    public Task AddNewProduct(Update update);
+    public Task AddNewProduct(Product? product, Update update);
 }

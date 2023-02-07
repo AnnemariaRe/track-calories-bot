@@ -70,8 +70,13 @@ public class MealDataService : IMealDataService
         return mealData;
     }
 
-    public Task AddNewProduct(Update update)
+    public async Task AddNewProduct(Product? product, Update update)
     {
-        throw new NotImplementedException();
+        if (product != null)
+        {
+            var mealData = await GetMealData(update);
+            mealData?.Products?.Add(product);
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -23,8 +23,7 @@ public class AddProductConversationService : IAddProductConversationService
         var conversation =
             await _context.ProductConversations.FirstOrDefaultAsync(x => 
                 update.Message != null && x.User.TgId == update.Message.Chat.Id);
-
-
+        
         if (conversation != null) return conversation;
         
         var newConversation = new AddProductConversation()
@@ -33,6 +32,7 @@ public class AddProductConversationService : IAddProductConversationService
             User = user,
             CommandName = null,
             MealType = update.Message.Text,
+            ProductId = 0,
             ConversationStage = 0
         };
 
@@ -52,10 +52,23 @@ public class AddProductConversationService : IAddProductConversationService
     {
         if (update.Message?.Text != null)
         {
-            var user = GetAddProductConversation(update.Message.Chat.Id);
-            if (user?.Result is not null)
+            var conversation = GetAddProductConversation(update.Message.Chat.Id);
+            if (conversation?.Result is not null)
             {
-                user.Result.ConversationStage++;
+                conversation.Result.ConversationStage++;
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+    
+    public async Task AddProductId(Update update, long id)
+    {
+        if (update.Message?.Text != null)
+        {
+            var conversation = GetAddProductConversation(update.Message.Chat.Id);
+            if (conversation?.Result is not null)
+            {
+                conversation.Result.ProductId = id;
                 await _context.SaveChangesAsync();
             }
         }
