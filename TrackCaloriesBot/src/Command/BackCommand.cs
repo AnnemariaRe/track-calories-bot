@@ -11,9 +11,9 @@ public class BackCommand : ICommand
 {
     public string Key => Commands.BackCommand;
     private readonly IUserService _userService;
-    private readonly IAddProductConversationService _conversationService;
+    private readonly IConversationDataService _conversationService;
     
-    public BackCommand(IUserService userService, IAddProductConversationService conversationService)
+    public BackCommand(IUserService userService, IConversationDataService conversationService)
     {
         _userService = userService;
         _conversationService = conversationService;

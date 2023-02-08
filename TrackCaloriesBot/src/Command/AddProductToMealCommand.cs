@@ -2,7 +2,6 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Service;
 using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Command;
@@ -11,11 +10,11 @@ public class AddProductToMealCommand : ICommand
 {
     public string Key => Commands.AddProductToMealCommand;
     private readonly IUserService _userService;
-    private readonly IAddProductConversationService _conversationService;
+    private readonly IConversationDataService _conversationService;
     private readonly IDayTotalDataService _dayTotalDataService;
     private readonly IMealDataService _mealDataService;
     
-    public AddProductToMealCommand(IUserService userService, IAddProductConversationService conversationService, IDayTotalDataService dayTotalDataService, IMealDataService mealDataService)
+    public AddProductToMealCommand(IUserService userService, IConversationDataService conversationService, IDayTotalDataService dayTotalDataService, IMealDataService mealDataService)
     {
         _userService = userService;
         _conversationService = conversationService;

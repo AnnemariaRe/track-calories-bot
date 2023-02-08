@@ -7,16 +7,16 @@ using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
 
-public class AddProductConversationService : IAddProductConversationService
+public class ConversationDataService : IConversationDataService
 {
     private readonly ApplicationDbContext _context;
 
-    public AddProductConversationService(ApplicationDbContext context) 
+    public ConversationDataService(ApplicationDbContext context) 
     {
         _context = context;
     }
     
-    public async Task<AddProductConversation> CreateAddProductConversation(Update update)
+    public async Task<ConversationData> CreateAddProductConversation(Update update)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x =>
             update.Message != null && x.TgId == update.Message.Chat.Id);
@@ -27,7 +27,7 @@ public class AddProductConversationService : IAddProductConversationService
         
         if (conversation != null) return conversation;
         
-        var newConversation = new AddProductConversation()
+        var newConversation = new ConversationData()
         {
             Id = new Guid(),
             User = user,
@@ -43,7 +43,7 @@ public class AddProductConversationService : IAddProductConversationService
         return result.Entity;
     }
 
-    public async Task<AddProductConversation?>? GetAddProductConversation(long tgId)
+    public async Task<ConversationData?>? GetAddProductConversation(long tgId)
     {
         var conversation = await _context.ProductConversations.FirstOrDefaultAsync(x => x.User.TgId == tgId);
         return conversation;
@@ -51,7 +51,7 @@ public class AddProductConversationService : IAddProductConversationService
 
     public async Task IncrementStage(Update update)
     {
-        Task<AddProductConversation?>? conversation = null;
+        Task<ConversationData?>? conversation = null;
         switch (update.Type)
         {
             case UpdateType.CallbackQuery when update.CallbackQuery is { Data: { }, Message: { } }:
@@ -98,7 +98,7 @@ public class AddProductConversationService : IAddProductConversationService
         }
     }
 
-    public async Task DeleteAddProductConversation(AddProductConversation? conversation)
+    public async Task DeleteAddProductConversation(ConversationData? conversation)
     {
         _context.ProductConversations.Remove(conversation);
         await _context.SaveChangesAsync();

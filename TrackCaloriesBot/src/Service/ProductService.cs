@@ -53,13 +53,13 @@ public class ProductService : IProductService
         return result.Entity;
     }
 
-    public async Task<Product?>? GetProduct(long id)
+    public async Task<Product?>? GetProduct(long? id)
     {
         var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == id);
         return product;
     }
 
-    public async Task AddServingUnit(Update update, long id)
+    public async Task AddServingUnit(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -68,12 +68,13 @@ public class ProductService : IProductService
                 {
                     "Grams" => ServingType.Grams,
                     "Milliliters" => ServingType.Milliliters,
+                    _ => throw new ArgumentOutOfRangeException()
                 };
             await _context.SaveChangesAsync();
         }
     }
 
-    public async Task AddServingAmount(Update update, long id)
+    public async Task AddServingAmount(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -87,7 +88,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddCalorieAmount(Update update, long id)
+    public async Task AddCalorieAmount(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -101,7 +102,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddProtein(Update update, long id)
+    public async Task AddProtein(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -115,7 +116,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddFat(Update update, long id)
+    public async Task AddFat(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -129,7 +130,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddCarbs(Update update, long id)
+    public async Task AddCarbs(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -143,7 +144,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddQuantity(Update update, long id)
+    public async Task AddQuantity(Update update, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)

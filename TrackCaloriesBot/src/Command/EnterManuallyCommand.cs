@@ -11,10 +11,10 @@ public class EnterManuallyCommand : ICommand
 {
     public string Key => Commands.EnterManuallyCommand;
     private readonly IUserService _userService;
-    private readonly IAddProductConversationService _conversationService;
+    private readonly IConversationDataService _conversationService;
     private readonly IProductService _productService;
     
-    public EnterManuallyCommand(IUserService userService, IAddProductConversationService conversationService, IProductService productService)
+    public EnterManuallyCommand(IUserService userService, IConversationDataService conversationService, IProductService productService)
     {
         _userService = userService;
         _conversationService = conversationService;
@@ -42,7 +42,7 @@ public class EnterManuallyCommand : ICommand
                 await _conversationService.AddCommandName(update);
             }
 
-            long productId = 0;
+            long? productId = 0;
             if (conversation.ProductId != null)
             {
                 productId = conversation.ProductId;
