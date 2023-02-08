@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -79,15 +80,25 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 3:
                     await _productService.AddServingAmount(update, productId);
+                    if (_productService.GetProduct(productId)!.Result.ServingAmount < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.IncrementStage(update);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
-                        text: "Write calorie amount",
+                        text: "Write calorie amount per 100 grams",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 4:
                     await _productService.AddCalorieAmount(update, productId);
+                    if (_productService.GetProduct(productId)!.Result.BaseCalories < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.IncrementStage(update);
                     
                     await client.SendTextMessageAsync(
@@ -101,7 +112,7 @@ public class EnterManuallyCommand : ICommand
                         await _conversationService.IncrementStage(update);
                         await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,
-                            text: "Write protein amount",
+                            text: "Write protein amount (per 100 grams)",
                             replyMarkup: new ReplyKeyboardRemove());
                         break;
                     }
@@ -116,24 +127,39 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 6:
                     await _productService.AddProtein(update, productId);
+                    if (_productService.GetProduct(productId)!.Result.BaseProtein < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.IncrementStage(update);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
-                        text: "Write fat amount",
+                        text: "Write fat amount (per 100 grams)",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 7:
                     await _productService.AddFat(update, productId);
+                    if (_productService.GetProduct(productId)!.Result.BaseFat < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.IncrementStage(update);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
-                        text: "Write carbs amount",
+                        text: "Write carbs amount (per 100 grams)",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 8:
                     await _productService.AddCarbs(update, productId);
+                    if (_productService.GetProduct(productId)!.Result.BaseCarbs < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.IncrementStage(update);
 
                     goto case 9;
@@ -147,6 +173,11 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 10:
                     await _productService.AddQuantity(update, productId);
+                    if (_productService.GetProduct(productId)!.Result.Quantity < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.DeleteAddProductConversation(conversation);
                     
                     await client.SendTextMessageAsync(
@@ -156,5 +187,13 @@ public class EnterManuallyCommand : ICommand
                     break;
             }
         }
+    }
+
+    private async Task WrongAnswerMessage(long id, ITelegramBotClient client)
+    {
+        await client.SendTextMessageAsync(
+            chatId: id,
+            text: "Write a positive number, please",
+            replyMarkup: new ReplyKeyboardRemove());
     }
 }
