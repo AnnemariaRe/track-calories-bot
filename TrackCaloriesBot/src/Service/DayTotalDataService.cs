@@ -32,7 +32,7 @@ public class DayTotalDataService : IDayTotalDataService
         var newDayTotalData = new DayTotalData
         {
             DayId = messageDate.GetHashCode(),
-            MealData = null,
+            MealData = new List<MealData>(),
             Water = 0,
             Date = messageDate
         };
@@ -45,7 +45,7 @@ public class DayTotalDataService : IDayTotalDataService
         return result.Entity;
     }
 
-    public async Task<DayTotalData> GetDayTotalData(Update update)
+    public async Task<DayTotalData?>? GetDayTotalData(Update update)
     {
         var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
         
@@ -53,6 +53,12 @@ public class DayTotalDataService : IDayTotalDataService
                 x.Date == messageDate);
         
         return dayTotalData;
+    }
+
+    public async Task<MealData?> GetMealData(MealType mealType, DayTotalData dayTotalData)
+    { 
+        return _context.MealData.FirstOrDefault(x =>
+            x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == mealType);
     }
 
     public async Task AddWater(Update update, float x)

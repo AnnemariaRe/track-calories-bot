@@ -131,11 +131,11 @@ public class RegisterCommand : ICommand
                 break;
             case 8:
                 await _userService.AddProjectedProgress(update);
-                if (userData.ProjectedProgress is < 0 or >= 2)
+                if (userData.ProjectedProgress is < 0 or >= 1)
                 {
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
-                        text: "Inappropriate output. A number should be between 0 and 2 kg.\n" +
+                        text: "Inappropriate output. A number should be between 0 and 1 kg.\n" +
                               "Try one more time");
                     break;
                 }

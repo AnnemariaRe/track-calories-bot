@@ -52,14 +52,12 @@ public class MealDataService : IMealDataService
 
     public async Task<MealData?> GetMealData(Update? update, MealType mealType)
     {
-        var type = mealType;
-        
         var messageDate = update?.Message?.Date.ToString("dd.MM.yyyy");
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
             x.Date == messageDate);
 
         var mealData = await _context.MealData.FirstOrDefaultAsync(x =>
-            dayTotalData != null && x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == type);
+            dayTotalData != null && x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == mealType);
         
         return mealData;
     }
@@ -72,5 +70,10 @@ public class MealDataService : IMealDataService
             mealData?.Products?.Add(product);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public List<Product> GetProducts(MealData mealData)
+    { 
+        return _context.Products.Where(x => x.MealData == mealData).ToList();
     }
 }

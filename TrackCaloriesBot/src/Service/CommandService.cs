@@ -51,22 +51,13 @@ public class CommandService : ICommandService
             case Commands.AddWaterCommand:
                 await ExecuteCommand(Commands.AddWaterCommand, update, client);
                 break;
-            case Commands.BackCommand:
+            case Commands.BackCommand or Commands.DefaultBackCommand:
                 await ExecuteCommand(Commands.BackCommand, update, client);
                 break;
             case Commands.EnterManuallyCommand:
                 await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
                 break;
-            case "Breakfast":
-                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
-                break;
-            case "Lunch":
-                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
-                break;
-            case "Dinner":
-                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
-                break;
-            case "Snack":
+            case "Breakfast" or "Lunch" or "Dinner" or "Snack":
                 await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
                 break;
         }

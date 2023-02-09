@@ -15,4 +15,5 @@ public static class Commands
     public const string ProgressCommand = "My progress";
     public const string AddWaterCommand = "Water";
     public const string BackCommand = "Back";
+    public const string DefaultBackCommand = "/back";
 }

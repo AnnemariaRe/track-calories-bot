@@ -43,7 +43,10 @@ public class ProductService : IProductService
             ProductId = new Guid().GetHashCode(),
             Name = update.Message?.Text,
             Quantity = 1,
-            MealData = mealData
+            MealData = mealData,
+            BaseProtein = 0,
+            BaseFat = 0,
+            BaseCarbs = 0
         };
 
         await _mealDataService.AddNewProduct(newProduct, update);
