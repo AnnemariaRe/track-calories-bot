@@ -25,14 +25,14 @@ public class NewRecordCommand : ICommand
         if (userData is null)
         {
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Welcome to the Track Calories Bot!",
                 replyMarkup: InlineKeyboards.StartInlineKeyboard);
         }
         else
         {
             await client.SendTextMessageAsync(
-                chatId: update.Message.Chat.Id,
+                chatId: message.Chat.Id,
                 text: "Choose record type",
                 replyMarkup: KeyboardMarkups.NewRecordKeyboardMarkup);
         }
