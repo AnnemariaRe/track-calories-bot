@@ -40,4 +40,34 @@ public class SpoonacularService : ISpoonacularService
         
         return products;
     }
+
+    public async Task<ResponseProduct?> GetProductInfo(int id)
+    {
+        var url = "https://api.spoonacular.com/food/ingredients/";
+        var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}&amount=1";
+        
+        var client = new HttpClient();
+        client.BaseAddress = new Uri(url);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await client.GetAsync(parameters).ConfigureAwait(false);
+
+        var product = new ResponseProduct();
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            try
+            {
+                product = JsonConvert.DeserializeObject<ResponseProduct>(jsonString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+        }
+        
+        return product;
+    }
 }
