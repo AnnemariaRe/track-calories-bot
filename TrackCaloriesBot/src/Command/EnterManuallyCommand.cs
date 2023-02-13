@@ -52,7 +52,7 @@ public class EnterManuallyCommand : ICommand
             switch (conversation.ConversationStage)
             {
                 case 0:
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -62,7 +62,7 @@ public class EnterManuallyCommand : ICommand
                 case 1:
                     var product = await _productService.CreateProduct(update);
                     await _conversationService.AddProductId(update, product.ProductId);
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -71,7 +71,7 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 2:
                     await _productService.AddServingUnit(update, productId);
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -85,7 +85,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -99,7 +99,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -109,7 +109,7 @@ public class EnterManuallyCommand : ICommand
                 case 5:
                     if (update.CallbackQuery?.Data is "yes")
                     {
-                        await _conversationService.IncrementStage(update);
+                        await _conversationService.IncrementStage(message.Chat.Id);
                         await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: "Write protein amount (per 100 grams)",
@@ -120,7 +120,7 @@ public class EnterManuallyCommand : ICommand
                     {
                         for (var i = 0; i < 4; i++)
                         {
-                            await _conversationService.IncrementStage(update);
+                            await _conversationService.IncrementStage(message.Chat.Id);
                         }
                         goto case 9;
                     }
@@ -132,7 +132,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -146,7 +146,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -160,11 +160,11 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
 
                     goto case 9;
                 case 9:
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                                         
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,

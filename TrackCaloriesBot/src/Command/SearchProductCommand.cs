@@ -63,7 +63,7 @@ public class SearchProductCommand : ICommand
             switch (conversation.ConversationStage)
             {
                 case 0:
-                    await _conversationService.IncrementStage(update);
+                    await _conversationService.IncrementStage(message.Chat.Id);
 
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,

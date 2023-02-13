@@ -49,22 +49,9 @@ public class ConversationDataService : IConversationDataService
         return conversation;
     }
 
-    public async Task IncrementStage(Update update)
+    public async Task IncrementStage(long id)
     {
-        Task<ConversationData?>? conversation = null;
-        switch (update.Type)
-        {
-            case UpdateType.CallbackQuery when update.CallbackQuery is { Data: { }, Message: { } }:
-            {
-                conversation = GetAddProductConversation(update.CallbackQuery.Message.Chat.Id);
-                break;
-            }
-            case UpdateType.Message when update.Message != null:
-            {
-                conversation = GetAddProductConversation(update.Message.Chat.Id);
-                break;
-            }
-        }
+        var conversation = GetAddProductConversation(id);
         if (conversation?.Result is not null)
         {
          conversation.Result.ConversationStage++;

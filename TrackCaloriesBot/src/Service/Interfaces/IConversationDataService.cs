@@ -7,7 +7,7 @@ public interface IConversationDataService
 {
     public Task<ConversationData> CreateAddProductConversation(Update update);
     public Task<ConversationData?>? GetAddProductConversation(long tgId);
-    public Task IncrementStage(Update update);
+    public Task IncrementStage(long id);
     public Task AddCommandName(Update update);
     public Task AddProductId(Update update, long id);
     public Task DeleteAddProductConversation(ConversationData conversation);
