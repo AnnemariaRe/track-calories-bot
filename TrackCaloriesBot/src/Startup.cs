@@ -1,3 +1,6 @@
+using FatSecretDotNet;
+using FatSecretDotNet.Authentication;
+using FatSecretDotNet.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Context;
+using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Service;
+using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot;
 
@@ -18,7 +23,7 @@ public class Startup
     }
 
     private readonly IConfiguration _configuration;
-    
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
@@ -32,6 +37,8 @@ public class Startup
         services.AddSingleton<IDayTotalDataService, DayTotalDataService>();
         services.AddSingleton<IMealDataService, MealDataService>();
         services.AddSingleton<IProductService, ProductService>();
+        services.AddSingleton<IConversationDataService, ConversationDataService>();
+        services.AddSingleton<ISpoonacularService, SpoonacularService>();
         services.AddSingleton<ICommand, StartCommand>();
         services.AddSingleton<ICommand, RegisterCommand>();
         services.AddSingleton<ICommand, ShowUserInfoCommand>();
@@ -40,6 +47,10 @@ public class Startup
         services.AddSingleton<ICommand, AddProductToMealCommand>();
         services.AddSingleton<ICommand, AddWaterCommand>();
         services.AddSingleton<ICommand, BackCommand>();
+        services.AddSingleton<ICommand, EnterManuallyCommand>();
+        services.AddSingleton<ICommand, SearchProductCommand>();
+        services.AddSingleton<ICommand, SearchInlineQueryCommand>();
+
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)

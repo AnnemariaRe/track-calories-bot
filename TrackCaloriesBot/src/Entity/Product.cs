@@ -9,7 +9,7 @@ public class Product
     {
     }
 
-    [Key] public long ProductId { get; set; }
+    [Key] public int ProductId { get; set; }
     public string? Name { get; set; }
     public ServingType ServingType { get; set; }
     public int ServingAmount { get; set; }

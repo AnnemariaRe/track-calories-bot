@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Telegram.Bot;
-using Microsoft.Extensions.Hosting;
-using Telegram.Bot.Types.Enums;
 
 namespace TrackCaloriesBot;
 

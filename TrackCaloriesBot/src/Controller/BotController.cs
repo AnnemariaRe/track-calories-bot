@@ -1,9 +1,10 @@
 using System.Net.Http.Json;
+using FatSecretDotNet;
+using FatSecretDotNet.RequestObjects;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using TrackCaloriesBot.Service;
 using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Controller;
@@ -26,11 +27,11 @@ public class BotController : ControllerBase
     {
         var upd = JsonConvert.DeserializeObject<Update>(update.ToString()!);
         
-        if (upd?.Message is null && upd?.CallbackQuery is null)
+        if (upd?.Message is null && upd?.CallbackQuery is null && upd?.InlineQuery is null)
         {
             return Ok();
         }
-        
+
         try
         {
             await _commandService.Execute(upd, _botClient);
