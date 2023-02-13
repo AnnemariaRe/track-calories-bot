@@ -22,12 +22,12 @@ public class CommandService : ICommandService
     {
         if (update is { Type: UpdateType.InlineQuery })
         {
-            if (update.InlineQuery.Query.Length > 4 )
+            if (update.InlineQuery.Query.Length is > 4 and < 15 )
             {
                 await ExecuteCommand(Commands.InlineCommand, update, client);
             }
         }
-        
+
         var messageText = update?.Message?.Text;
         var callbackQuery = update?.CallbackQuery;
 
@@ -95,6 +95,9 @@ public class CommandService : ICommandService
                 {
                     await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
                 }
+                break;
+            case Commands.InlineCommand:
+                await ExecuteCommand(Commands.InlineCommand, update, client);
                 break;
         }
     }

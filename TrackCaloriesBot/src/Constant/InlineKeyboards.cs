@@ -33,5 +33,10 @@ public static class InlineKeyboards
         InlineKeyboardButton.WithSwitchInlineQueryCurrentChat(
             text: "start searching...")
     });
+    public static InlineKeyboardMarkup ProductInfoInlineKeyboard = new InlineKeyboardMarkup(new[]
+    {
+        new[] { InlineKeyboardButton.WithCallbackData("Continue", "/continue") },
+        new[] { InlineKeyboardButton.WithCallbackData("Choose another one", "/search") }
+    });
     
 }

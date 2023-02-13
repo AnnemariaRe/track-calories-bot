@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace TrackCaloriesBot.Entity;
@@ -6,9 +7,12 @@ namespace TrackCaloriesBot.Entity;
 public class ResponseProduct
 {
     [JsonProperty("id")]
-    public long ProductId { get; set; }
+    public int ProductId { get; set; }
     [JsonProperty("name")]
     public string Title { get; set; }
     [JsonProperty("image")]
     public string Image { get; set; }
+    [JsonProperty("nutrition")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ResponseNutrition Nutrition { get; set; }
 }
