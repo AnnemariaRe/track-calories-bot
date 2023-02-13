@@ -12,8 +12,8 @@ public class SpoonacularService : ISpoonacularService
     {
         var products = new List<ResponseProduct>();
         
-        var url = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/products/search";
-        var parameters = $"?query={query}&apiKey={Keys.SPOONACULAR_API_KEY}&number=7";
+        var url = "https://api.spoonacular.com/food/ingredients/search";
+        var parameters = $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&number=15";
 
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);
@@ -29,6 +29,12 @@ public class SpoonacularService : ISpoonacularService
             if (productList != null)
             {
                 products.AddRange(productList.Products);
+                string str;
+                foreach (var product in products)
+                {
+                    str = product.Image;
+                    product.Image = "https://spoonacular.com/cdn/ingredients_100x100/" + str;
+                }
             }
         }
         

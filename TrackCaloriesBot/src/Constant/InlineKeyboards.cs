@@ -28,5 +28,10 @@ public static class InlineKeyboards
             InlineKeyboardButton.WithCallbackData("no", "no")
         },
     });
+    public static InlineKeyboardMarkup SearchInlineKeyboard = new(new[]
+    {
+        InlineKeyboardButton.WithSwitchInlineQueryCurrentChat(
+            text: "start searching...")
+    });
     
 }

@@ -20,6 +20,14 @@ public class CommandService : ICommandService
     
     public async Task Execute(Update? update, TelegramBotClient client)
     {
+        if (update is { Type: UpdateType.InlineQuery })
+        {
+            if (update.InlineQuery.Query.Length > 4 )
+            {
+                await ExecuteCommand(Commands.InlineCommand, update, client);
+            }
+        }
+        
         var messageText = update?.Message?.Text;
         var callbackQuery = update?.CallbackQuery;
 
@@ -56,6 +64,9 @@ public class CommandService : ICommandService
                 break;
             case Commands.EnterManuallyCommand:
                 await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
+                break;
+            case Commands.SearchProductsCommand:
+                await ExecuteCommand(Commands.SearchProductsCommand, update, client);
                 break;
             case "Breakfast" or "Lunch" or "Dinner" or "Snack":
                 await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
