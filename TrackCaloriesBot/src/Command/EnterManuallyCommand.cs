@@ -70,7 +70,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: InlineKeyboards.ServingTypeInlineKeyboard);
                     break;
                 case 2:
-                    await _productService.AddServingUnit(update, productId);
+                    await _productService.AddServingUnit(message.Text, productId);
                     await _conversationService.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
@@ -79,7 +79,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 3:
-                    await _productService.AddServingAmount(update, productId);
+                    await _productService.AddServingAmount(message.Text, productId);
                     if (_productService.GetProduct(productId)!.Result.ServingAmount < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
@@ -93,7 +93,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 4:
-                    await _productService.AddCalorieAmount(update, productId);
+                    await _productService.AddCalorieAmount(message.Text, productId);
                     if (_productService.GetProduct(productId)!.Result.BaseCalories < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
@@ -126,7 +126,7 @@ public class EnterManuallyCommand : ICommand
                     }
                     break;
                 case 6:
-                    await _productService.AddProtein(update, productId);
+                    await _productService.AddProtein(message.Text, productId);
                     if (_productService.GetProduct(productId)!.Result.BaseProtein < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
@@ -140,7 +140,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 7:
-                    await _productService.AddFat(update, productId);
+                    await _productService.AddFat(message.Text, productId);
                     if (_productService.GetProduct(productId)!.Result.BaseFat < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
@@ -154,7 +154,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 8:
-                    await _productService.AddCarbs(update, productId);
+                    await _productService.AddCarbs(message.Text, productId);
                     if (_productService.GetProduct(productId)!.Result.BaseCarbs < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
@@ -172,7 +172,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 10:
-                    await _productService.AddQuantity(update, productId);
+                    await _productService.AddQuantity(message.Text, productId);
                     if (_productService.GetProduct(productId)!.Result.Quantity < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);

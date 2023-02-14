@@ -5,13 +5,15 @@ namespace TrackCaloriesBot.Service.Interfaces;
 
 public interface IProductService
 {
-    public Task<Product> CreateProduct(Update update);
+    public Task<Product> CreateProduct(Update update, int productId = 0);
     public Task<Product?>? GetProduct(long? id);
-    public Task AddServingUnit(Update update, long? id);
-    public Task AddServingAmount(Update update, long? id);
-    public Task AddCalorieAmount(Update update, long? id);
-    public Task AddProtein(Update update, long? id);
-    public Task AddFat(Update update, long? id);
-    public Task AddCarbs(Update update, long? id);
-    public Task AddQuantity(Update update, long? id);
+    public Task AddServingUnit(string message, long? id);
+    public Task AddName(string message, long? id);
+    public Task AddServingAmount(string message, long? id);
+    public Task AddCalorieAmount(string? message, long? id);
+    public Task AddProtein(string message, long? id);
+    public Task AddFat(string message, long? id);
+    public Task AddCarbs(string message, long? id);
+    public Task AddQuantity(string message, long? id);
+    public Task AddProductInfoFromResponse(ResponseProduct responseProduct);
 }

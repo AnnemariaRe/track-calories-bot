@@ -18,7 +18,7 @@ public class ProductService : IProductService
         _context = context;
         _mealDataService = mealDataService;
     }
-    public async Task<Product> CreateProduct(Update update)
+    public async Task<Product> CreateProduct(Update update, int productId = 0)
     {
         var conversation =
             await _context.ProductConversations.FirstOrDefaultAsync( x => 
@@ -37,11 +37,12 @@ public class ProductService : IProductService
             x => update.Message != null && x.ProductId == conversation!.ProductId);
         
         if (product != null) return product;
+        var id = productId is 0 ? new Guid().GetHashCode() : productId;
         
         var newProduct = new Product()
         {
-            ProductId = new Guid().GetHashCode(),
-            Name = update.Message?.Text,
+            ProductId = id,
+            Name = (bool)update.Message?.Text?.Contains('/') ? null : update.Message?.Text,
             Quantity = 1,
             MealData = mealData,
             BaseProtein = 0,
@@ -62,12 +63,12 @@ public class ProductService : IProductService
         return product;
     }
 
-    public async Task AddServingUnit(Update update, long? id)
+    public async Task AddServingUnit(string message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            product.Result.ServingType = update.CallbackQuery?.Data switch
+            product.Result.ServingType = message switch
                 {
                     "Grams" => ServingType.Grams,
                     "Milliliters" => ServingType.Milliliters,
@@ -76,13 +77,23 @@ public class ProductService : IProductService
             await _context.SaveChangesAsync();
         }
     }
-
-    public async Task AddServingAmount(Update update, long? id)
+    
+    public async Task AddName(string message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(update.Message?.Text, out var x);
+            product.Result.Name = message;
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    public async Task AddServingAmount(string message, long? id)
+    {
+        var product = GetProduct(id);
+        if (product?.Result is not null)
+        {
+            var check = int.TryParse(message, out var x);
             if (check)
             {
                 product.Result.ServingAmount = x;
@@ -91,12 +102,12 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddCalorieAmount(Update update, long? id)
+    public async Task AddCalorieAmount(string? message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(update.Message?.Text, out var x);
+            var check = int.TryParse(message, out var x);
             if (check)
             {
                 product.Result.BaseCalories = x;
@@ -105,12 +116,12 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddProtein(Update update, long? id)
+    public async Task AddProtein(string message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(update.Message?.Text, out var x);
+            var check = int.TryParse(message, out var x);
             if (check)
             {
                 product.Result.BaseProtein = x;
@@ -119,12 +130,12 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddFat(Update update, long? id)
+    public async Task AddFat(string message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(update.Message?.Text, out var x);
+            var check = int.TryParse(message, out var x);
             if (check)
             {
                 product.Result.BaseFat = x;
@@ -133,12 +144,12 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddCarbs(Update update, long? id)
+    public async Task AddCarbs(string message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(update.Message?.Text, out var x);
+            var check = int.TryParse(message, out var x);
             if (check)
             {
                 product.Result.BaseCarbs = x;
@@ -147,17 +158,30 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddQuantity(Update update, long? id)
+    public async Task AddQuantity(string message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(update.Message?.Text, out var x);
+            var check = int.TryParse(message, out var x);
             if (check)
             {
                 product.Result.Quantity = x;
                 await _context.SaveChangesAsync();
             }
+        }
+    }
+
+    public async Task AddProductInfoFromResponse(ResponseProduct responseProduct)
+    {
+        var id = responseProduct.ProductId;
+        var product = GetProduct(id);
+        if (product?.Result is not null)
+        {
+            await AddName(responseProduct.Title, id);
+            await AddCalorieAmount(
+                responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Calories")?.Amount.ToString(), id);
+            await AddCarbs(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")?.Amount.ToString(), id);)
         }
     }
 }
