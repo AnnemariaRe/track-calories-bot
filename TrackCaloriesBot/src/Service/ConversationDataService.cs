@@ -95,7 +95,7 @@ public class ConversationDataService : IConversationDataService
         }
     }
 
-    public async Task DeleteAddProductConversation(ConversationData? conversation)
+    public async Task DeleteConversation(ConversationData? conversation)
     {
         _context.ProductConversations.Remove(conversation);
         await _context.SaveChangesAsync();

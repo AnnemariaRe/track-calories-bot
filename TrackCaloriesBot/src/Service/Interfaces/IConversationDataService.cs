@@ -11,5 +11,5 @@ public interface IConversationDataService
     public Task DecrementStage(long id);
     public Task AddCommandName(Update update);
     public Task AddProductId(Update update, long id);
-    public Task DeleteAddProductConversation(ConversationData conversation);
+    public Task DeleteConversation(ConversationData conversation);
 }
