@@ -11,9 +11,10 @@ public interface IProductService
     public Task AddName(string message, long? id);
     public Task AddServingAmount(string message, long? id);
     public Task AddCalorieAmount(string? message, long? id);
-    public Task AddProtein(string message, long? id);
-    public Task AddFat(string message, long? id);
-    public Task AddCarbs(string message, long? id);
+    public Task AddProtein(string? message, long? id);
+    public Task AddFat(string? message, long? id);
+    public Task AddCarbs(string? message, long? id);
     public Task AddQuantity(string message, long? id);
     public Task AddProductInfoFromResponse(ResponseProduct responseProduct);
+    public Task DeleteProduct(long? id);
 }

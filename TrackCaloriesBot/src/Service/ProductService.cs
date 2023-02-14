@@ -116,7 +116,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddProtein(string message, long? id)
+    public async Task AddProtein(string? message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -130,7 +130,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddFat(string message, long? id)
+    public async Task AddFat(string? message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -144,7 +144,7 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddCarbs(string message, long? id)
+    public async Task AddCarbs(string? message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
@@ -181,7 +181,17 @@ public class ProductService : IProductService
             await AddName(responseProduct.Title, id);
             await AddCalorieAmount(
                 responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Calories")?.Amount.ToString(), id);
-            await AddCarbs(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")?.Amount.ToString(), id);)
+            await AddCarbs(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")?.Amount.ToString(), id);
+            await AddProtein(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Protein")?.Amount.ToString(), id);
+            await AddFat(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Fat")?.Amount.ToString(), id);
+            await AddServingUnit("grams", id);
         }
+    }
+    
+    public async Task DeleteProduct(long? id)
+    {
+        var product = await GetProduct(id)!;
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
     }
 }
