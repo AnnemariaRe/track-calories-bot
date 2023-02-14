@@ -59,6 +59,16 @@ public class ConversationDataService : IConversationDataService
         }
     }
     
+    public async Task DecrementStage(long id)
+    {
+        var conversation = GetAddProductConversation(id);
+        if (conversation?.Result != null && conversation.Result.ConversationStage != 0)
+        {
+            conversation.Result.ConversationStage--;
+            await _context.SaveChangesAsync();
+        }
+    }
+    
     public async Task AddProductId(Update update, long id)
     {
         if (update.Message?.Text != null)
