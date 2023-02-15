@@ -1,10 +1,11 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 using TrackCaloriesBot.Service.Interfaces;
-using static TrackCaloriesBot.Enums.MealType;
 
 namespace TrackCaloriesBot.Service;
 
@@ -18,7 +19,7 @@ public class ProductService : IProductService
         _context = context;
         _mealDataService = mealDataService;
     }
-    public async Task<Product> CreateProduct(Update update, int productId = 0)
+    public async Task<Product> CreateProduct(Update update)
     {
         var conversation =
             await _context.ProductConversations.FirstOrDefaultAsync( x => 
@@ -34,15 +35,14 @@ public class ProductService : IProductService
         var mealData = await _mealDataService.GetMealData(update, mealType);
         
         var product = await _context.Products.FirstOrDefaultAsync(
-            x => update.Message != null && x.ProductId == conversation!.ProductId);
-        
+        x => update.Message != null && x.Name == update.Message.Text);
+
         if (product != null) return product;
-        var id = productId is 0 ? new Guid().GetHashCode() : productId;
-        
+
         var newProduct = new Product()
         {
-            ProductId = id,
-            Name = (bool)update.Message?.Text?.Contains('/') ? null : update.Message?.Text,
+            ProductId = new Guid().GetHashCode(),
+            Name = update.Message?.Text,
             Quantity = 1,
             MealData = mealData,
             BaseProtein = 0,
@@ -172,26 +172,31 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task AddProductInfoFromResponse(ResponseProduct responseProduct)
+    public async Task AddProductInfoFromResponse(ResponseProduct responseProduct, long? id)
     {
-        var id = responseProduct.ProductId;
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
             await AddName(responseProduct.Title, id);
             await AddCalorieAmount(
-                responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Calories")?.Amount.ToString(), id);
-            await AddCarbs(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")?.Amount.ToString(), id);
-            await AddProtein(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Protein")?.Amount.ToString(), id);
-            await AddFat(responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Fat")?.Amount.ToString(), id);
-            await AddServingUnit("grams", id);
+                ((int)responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Calories")?.Amount!)
+                .ToString(), id);
+            await AddCarbs(((int)responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")
+                                           ?.Amount!).ToString(), id);
+            await AddProtein(
+                ((int)responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Protein")?.Amount!).ToString(),
+                id);
+            await AddFat(
+                ((int)responseProduct.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Fat")?.Amount!).ToString(),
+                id);
+            await AddServingUnit("Grams", id);
         }
     }
     
     public async Task DeleteProduct(long? id)
     {
         var product = await GetProduct(id)!;
-        _context.Products.Remove(product);
+        _context.Products.Remove(product!);
         await _context.SaveChangesAsync();
     }
 }

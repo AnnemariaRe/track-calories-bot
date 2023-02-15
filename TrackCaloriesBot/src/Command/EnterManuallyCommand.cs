@@ -178,7 +178,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.DeleteAddProductConversation(conversation);
+                    await _conversationService.DeleteConversation(conversation);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,

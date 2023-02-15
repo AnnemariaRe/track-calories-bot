@@ -1,6 +1,3 @@
-using System.Net.Http.Json;
-using FatSecretDotNet;
-using FatSecretDotNet.RequestObjects;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Telegram.Bot;

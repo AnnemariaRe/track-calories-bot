@@ -76,44 +76,74 @@ public class SearchProductCommand : ICommand
                         replyMarkup: InlineKeyboards.SearchInlineKeyboard);
                     break;
                 case 1:
-                    await _conversationService.IncrementStage(message.From.Id);
+                    await _conversationService.IncrementStage(message.Chat.Id);
                     goto case 2;
                 case 2:
                     if (text is "/continue")
                     {
-                        await _conversationService.IncrementStage(message.From.Id);
+                        await _conversationService.IncrementStage(message.Chat.Id);
                         goto case 3;
                     }
                     if (text is "/search")
                     {
-                        await _conversationService.DecrementStage(message.From.Id);
+                        var id1 = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
+                        await _productService.DeleteProduct(id1);
+                        await _conversationService.DecrementStage(message.Chat.Id);
                         goto case 0;
                     }
-                    
-                    var productResult = new ResponseProduct();
                     if (int.TryParse(message.Text, out var x))
                     {
-                        productResult = _spoonacularService.GetProductInfo(x).Result;
-                    }
-                            
-                    var textMessage= $"<b>{productResult.Title}</b> \n" + "---------------------------------------\n" +
-                                     $"<pre>Calories: {productResult.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Calories").Amount} kcal \n" +
-                                     $"Carbs:    {productResult.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates").Amount} g \n" +
-                                     $"Protein:  {productResult.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Protein").Amount} g \n" +
-                                     $"Fat:      {productResult.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Fat").Amount} g </pre>\n";
-    
-                    await client.SendTextMessageAsync(
-                        chatId: message.Chat.Id,
-                        text: textMessage,
-                        parseMode: ParseMode.Html,
-                        replyMarkup: InlineKeyboards.ProductInfoInlineKeyboard);
+                        var productResult = _spoonacularService.GetProductInfo(x).Result;
 
+                        
+                        var newProduct = await _productService.CreateProduct(update);
+                        await _conversationService.AddProductId(update, newProduct.ProductId);
+                        await _productService.AddProductInfoFromResponse(productResult, newProduct.ProductId);
+                        var product = await _productService.GetProduct(newProduct.ProductId)!;
+
+                        
+                                
+                        var textMessage= $"<b>{product?.Name}</b> \n" + 
+                                         "---------------------------------------\n" +
+                                         $"<pre>Calories: {product?.BaseCalories} kcal \n" +
+                                         $"Carbs:    {product?.BaseCarbs} g \n" +
+                                         $"Protein:  {product?.BaseProtein} g \n" +
+                                         $"Fat:      {product?.BaseFat} g </pre>\n";
+        
+                        await client.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: textMessage,
+                            parseMode: ParseMode.Html,
+                            replyMarkup: InlineKeyboards.ProductInfoInlineKeyboard);
+                    }
                     break;
                 case 3:
+                    await _conversationService.IncrementStage(message.Chat.Id);
+
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
-                        text: ":)",
+                        text: "Write serving amount (in grams)",
                         replyMarkup: new ReplyKeyboardRemove());
+                    break;
+                case 4:
+                    await _conversationService.IncrementStage(message.Chat.Id);
+                    var id2 = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
+                    await _productService.AddServingAmount(text, id2);
+                    
+                    await client.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: "Enter quantity (by default: 1)",
+                        replyMarkup: new ReplyKeyboardRemove());
+                    break;
+                case 5:
+                    var result = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result;
+                    await _productService.AddQuantity(text, result.ProductId);
+                    await _conversationService.DeleteConversation(result);
+                    
+                    await client.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: "Successfully added!",
+                        replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
                     break;
             }
 

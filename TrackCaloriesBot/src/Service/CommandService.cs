@@ -25,6 +25,7 @@ public class CommandService : ICommandService
             if (update.InlineQuery.Query.Length is > 4 and < 15 )
             {
                 await ExecuteCommand(Commands.InlineCommand, update, client);
+                return;
             }
         }
 
@@ -46,31 +47,31 @@ public class CommandService : ICommandService
         {
             case Commands.StartCommand:
                 await ExecuteCommand(Commands.StartCommand, update, client);
-                break;
+                return;
             case Commands.ShowUserInfoCommand:
                 await ExecuteCommand(Commands.ShowUserInfoCommand, update, client);
-                break;
+                return;
             case Commands.SummaryCommand:
                 await ExecuteCommand(Commands.SummaryCommand, update, client);
-                break;
+                return;
             case Commands.NewRecordCommand:
                 await ExecuteCommand(Commands.NewRecordCommand, update, client);
-                break;
+                return;
             case Commands.AddWaterCommand:
                 await ExecuteCommand(Commands.AddWaterCommand, update, client);
-                break;
+                return;
             case Commands.BackCommand or Commands.DefaultBackCommand:
                 await ExecuteCommand(Commands.BackCommand, update, client);
-                break;
+                return;
             case Commands.EnterManuallyCommand:
                 await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
-                break;
+                return;
             case Commands.SearchProductsCommand:
                 await ExecuteCommand(Commands.SearchProductsCommand, update, client);
-                break;
+                return;
             case "Breakfast" or "Lunch" or "Dinner" or "Snack":
                 await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
-                break;
+                return;
         }
 
         switch (_lastCommand?.Key)
@@ -97,7 +98,10 @@ public class CommandService : ICommandService
                 }
                 break;
             case Commands.InlineCommand:
-                await ExecuteCommand(Commands.InlineCommand, update, client);
+                await ExecuteCommand(Commands.SearchProductsCommand, update, client);
+                break;
+            case Commands.SearchProductsCommand:
+                await ExecuteCommand(Commands.SearchProductsCommand, update, client);
                 break;
         }
     }

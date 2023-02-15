@@ -34,9 +34,8 @@ public class BackCommand : ICommand
         else
         {
             var conversation = await _conversationService.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is not null) await _conversationService.DeleteAddProductConversation(conversation);
-            
-            
+            if (conversation is not null) await _conversationService.DeleteConversation(conversation);
+
             await client.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: "Choose action",
