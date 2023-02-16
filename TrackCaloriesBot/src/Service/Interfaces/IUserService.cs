@@ -7,7 +7,7 @@ namespace TrackCaloriesBot.Service.Interfaces;
 public interface IUserService
 {
     public Task<User> CreateUser(Update update);
-    public Task<User?>? GetUser(long id);
+    public Task<User?> GetUser(long id);
     public Task IncrementStage(Update update);
     public Task AddName(Update update);
     public Task AddAge(Update update);

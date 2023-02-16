@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
+using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
@@ -45,6 +46,10 @@ public class ConversationDataService : IConversationDataService
     public async Task<ConversationData?>? GetAddProductConversation(long tgId)
     {
         var conversation = await _context.ProductConversations.FirstOrDefaultAsync(x => x.User.TgId == tgId);
+        if (conversation is null)
+        {
+            throw new NullBotException("ConversationData entity is not found.");
+        }
         return conversation;
     }
 

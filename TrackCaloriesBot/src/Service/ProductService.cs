@@ -5,6 +5,7 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
+using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
@@ -57,9 +58,13 @@ public class ProductService : IProductService
         return result.Entity;
     }
 
-    public async Task<Product?>? GetProduct(long? id)
+    public async Task<Product?> GetProduct(long? id)
     {
         var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+        if (product is null)
+        {
+            throw new NullBotException("Product entity is not found.");
+        }
         return product;
     }
 

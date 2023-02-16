@@ -6,7 +6,7 @@ namespace TrackCaloriesBot.Service.Interfaces;
 public interface IProductService
 {
     public Task<Product> CreateProduct(Update update);
-    public Task<Product?>? GetProduct(long? id);
+    public Task<Product?> GetProduct(long? id);
     public Task AddServingUnit(string message, long? id);
     public Task AddName(string message, long? id);
     public Task AddServingAmount(string message, long? id);

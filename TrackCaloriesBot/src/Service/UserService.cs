@@ -3,6 +3,7 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
+using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Service.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 
@@ -196,9 +197,14 @@ public class UserService : IUserService
         }
     }
 
-    public async Task<User?>? GetUser(long id)
+    public async Task<User?> GetUser(long id)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.TgId == id);
+        if (user is null)
+        {
+            throw new NullBotException("User entity is not found.");
+        }
+        
         return user;
     }
     

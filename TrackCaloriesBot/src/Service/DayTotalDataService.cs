@@ -3,6 +3,7 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
+using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
@@ -52,13 +53,24 @@ public class DayTotalDataService : IDayTotalDataService
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
                 x.Date == messageDate);
         
+        if (dayTotalData is null)
+        {
+            throw new NullBotException("DayTotalData entity is not found.");
+        }
+        
         return dayTotalData;
     }
 
     public async Task<MealData?> GetMealData(MealType mealType, DayTotalData dayTotalData)
     { 
-        return _context.MealData.FirstOrDefault(x =>
-            x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == mealType);
+        var mealData = _context.MealData.FirstOrDefault(x =>
+            x.DayTotalData != null && x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == mealType);
+
+        if (mealData is null)
+        {
+            throw new NullBotException("MealData entity is not found.");
+        }
+        return mealData;
     }
 
     public async Task AddWater(Update update, float x)
