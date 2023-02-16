@@ -62,57 +62,57 @@ public class SummaryCommand : ICommand
         var dinnerData = _dayTotalDataService.GetMealData(MealType.Dinner, dayTotal.Result);
         var snackData = _dayTotalDataService.GetMealData(MealType.Snack, dayTotal.Result);
         
-        var mealDataCalories = new List<int>(new int[4]);
-        var mealDataProtein = new List<int>(new int[4]);
-        var mealDataFat = new List<int>(new int[4]);
-        var mealDataCarbs = new List<int>(new int[4]);
+        var mealDataCalories = new double[4];
+        var mealDataProtein = new double[4];
+        var mealDataFat = new double[4];
+        var mealDataCarbs = new double[4];
         
         if (breakfastData is { Result: { } })
         {
             mealDataCalories[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
-                    product.BaseCalories * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataProtein[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
-                    product.BaseProtein * (product.ServingAmount / 100) * product.Quantity);
+                    product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataFat[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
-                product.BaseFat * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataCarbs[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
-                product.BaseCarbs * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
 
         if (lunchData is { Result: { } })
         {
             mealDataCalories[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
-                product.BaseCalories * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataProtein[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
-                product.BaseProtein * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataFat[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
-                product.BaseFat * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataCarbs[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
-                product.BaseCarbs * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
 
         if (dinnerData is { Result: { } })
         {
             mealDataCalories[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
-                product.BaseCalories * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataProtein[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
-                product.BaseProtein * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataFat[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
-                product.BaseFat * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataCarbs[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
-                product.BaseCarbs * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
         
         if (snackData is { Result: { } })
         {
             mealDataCalories[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
-                product.BaseCalories * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataProtein[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
-                product.BaseProtein * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataFat[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
-                product.BaseFat * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
             mealDataCarbs[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
-                product.BaseCarbs * (product.ServingAmount / 100) * product.Quantity);
+                product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
         
         var caloriesAte = mealDataCalories.Sum();
