@@ -1,6 +1,3 @@
-using FatSecretDotNet;
-using FatSecretDotNet.Authentication;
-using FatSecretDotNet.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Context;
-using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Service;
 using TrackCaloriesBot.Service.Interfaces;
 
@@ -29,7 +25,7 @@ public class Startup
         services.AddControllers();
         
         services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
-            ""));
+            _configuration.GetConnectionString("Db")));
 
         services.AddSingleton<Bot>();
         services.AddSingleton<ICommandService, CommandService>();
@@ -50,7 +46,6 @@ public class Startup
         services.AddSingleton<ICommand, EnterManuallyCommand>();
         services.AddSingleton<ICommand, SearchProductCommand>();
         services.AddSingleton<ICommand, SearchInlineQueryCommand>();
-
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)

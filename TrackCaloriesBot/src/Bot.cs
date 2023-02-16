@@ -15,8 +15,8 @@ public class Bot
     
     public async Task<TelegramBotClient> GetClient()
     {
-        _botClient = new TelegramBotClient("");
-        var hook = "";
+        _botClient = new TelegramBotClient(_configuration["Token"]);
+        var hook = _configuration["Url"];
         //await _botClient.SetWebhookAsync(hook, dropPendingUpdates: true);
         await _botClient.SetWebhookAsync(hook);
 
