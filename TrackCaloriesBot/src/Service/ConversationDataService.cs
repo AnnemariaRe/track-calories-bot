@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Service.Interfaces;

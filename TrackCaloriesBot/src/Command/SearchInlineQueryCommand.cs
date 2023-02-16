@@ -32,6 +32,13 @@ public class SearchInlineQueryCommand : ICommand
                             new InputTextMessageContent($"{product.ProductId}")) { ThumbUrl = product.Image })
                     .Cast<InlineQueryResult>().ToList();
 
+                if (results is null)
+                {
+                    await client.SendTextMessageAsync(
+                        chatId: update.InlineQuery.Id,
+                        text: "Product does not exist, try again",
+                        replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
+                }
                 await client.AnswerInlineQueryAsync(
                     update.InlineQuery.Id, results);
             }

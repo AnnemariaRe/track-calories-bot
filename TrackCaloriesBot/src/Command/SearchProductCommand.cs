@@ -88,21 +88,19 @@ public class SearchProductCommand : ICommand
                     {
                         var id1 = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
                         await _productService.DeleteProduct(id1);
+                        await _conversationService.AddProductId(update, 0);
                         await _conversationService.DecrementStage(message.Chat.Id);
                         goto case 0;
                     }
                     if (int.TryParse(message.Text, out var x))
                     {
+                        var newProduct = await _productService.CreateProduct(update);
                         var productResult = _spoonacularService.GetProductInfo(x).Result;
 
-                        
-                        var newProduct = await _productService.CreateProduct(update);
-                        await _conversationService.AddProductId(update, newProduct.ProductId);
-                        await _productService.AddProductInfoFromResponse(productResult, newProduct.ProductId);
-                        var product = await _productService.GetProduct(newProduct.ProductId)!;
+                        await _conversationService.AddProductId(update, newProduct.Id);
+                        await _productService.AddProductInfoFromResponse(productResult, newProduct.Id);
+                        var product = await _productService.GetProduct(newProduct.Id)!;
 
-                        
-                                
                         var textMessage= $"<b>{product?.Name}</b> \n" + 
                                          "---------------------------------------\n" +
                                          $"<pre>Calories: {product?.BaseCalories} kcal \n" +
@@ -130,6 +128,12 @@ public class SearchProductCommand : ICommand
                     var id2 = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
                     await _productService.AddServingAmount(text, id2);
                     
+                    if (_productService.GetProduct(productId)!.Result!.ServingAmount < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
+                    
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Enter quantity (by default: 1)",
@@ -138,6 +142,12 @@ public class SearchProductCommand : ICommand
                 case 5:
                     var result = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result;
                     await _productService.AddQuantity(text, result.ProductId);
+                    
+                    if (_productService.GetProduct(productId)!.Result!.Quantity < 0)
+                    {
+                        await WrongAnswerMessage(message.Chat.Id, client);
+                        break;
+                    }
                     await _conversationService.DeleteConversation(result);
                     
                     await client.SendTextMessageAsync(
@@ -146,7 +156,14 @@ public class SearchProductCommand : ICommand
                         replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
                     break;
             }
-
         }
+    }
+    
+    private async Task WrongAnswerMessage(long id, ITelegramBotClient client)
+    {
+        await client.SendTextMessageAsync(
+            chatId: id,
+            text: "Write a positive number, please",
+            replyMarkup: new ReplyKeyboardRemove());
     }
 }

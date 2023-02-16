@@ -20,13 +20,10 @@ public class CommandService : ICommandService
     
     public async Task Execute(Update? update, TelegramBotClient client)
     {
-        if (update is { Type: UpdateType.InlineQuery })
+        if (update is { Type: UpdateType.InlineQuery, InlineQuery.Query.Length: > 3 and < 15 })
         {
-            if (update.InlineQuery.Query.Length is > 4 and < 15 )
-            {
-                await ExecuteCommand(Commands.InlineCommand, update, client);
-                return;
-            }
+            await ExecuteCommand(Commands.InlineCommand, update, client);
+            return;
         }
 
         var messageText = update?.Message?.Text;

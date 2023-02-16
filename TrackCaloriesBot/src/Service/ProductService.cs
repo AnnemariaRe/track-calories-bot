@@ -41,7 +41,7 @@ public class ProductService : IProductService
 
         var newProduct = new Product()
         {
-            ProductId = new Guid().GetHashCode(),
+            Id = new Guid().GetHashCode(),
             Name = update.Message?.Text,
             Quantity = 1,
             MealData = mealData,
@@ -50,16 +50,16 @@ public class ProductService : IProductService
             BaseCarbs = 0
         };
 
-        await _mealDataService.AddNewProduct(newProduct, update);
         var result = await _context.Products.AddAsync(newProduct);
         await _context.SaveChangesAsync();
+        await _mealDataService.AddNewProduct(newProduct, update);
 
         return result.Entity;
     }
 
     public async Task<Product?>? GetProduct(long? id)
     {
-        var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId == id);
+        var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
         return product;
     }
 
