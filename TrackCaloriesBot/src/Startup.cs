@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,10 @@ public class Startup
         services.AddSingleton<ICommand, EnterManuallyCommand>();
         services.AddSingleton<ICommand, SearchProductCommand>();
         services.AddSingleton<ICommand, SearchInlineQueryCommand>();
+        
+        var culture = new CultureInfo("en-US");
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
