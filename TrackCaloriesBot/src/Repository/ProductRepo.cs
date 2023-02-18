@@ -22,7 +22,7 @@ public class ProductRepo : IProductRepo
     {
         var conversation =
             await _context.ProductConversations.FirstOrDefaultAsync( x => 
-                update.Message != null && x.User.TgId == update.Message.Chat.Id);
+                update.Message != null && x.UserId == update.Message.Chat.Id);
 
         var mealType = conversation?.MealType switch
         {

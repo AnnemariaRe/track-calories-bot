@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
@@ -9,99 +11,101 @@ namespace TrackCaloriesBot.Repository;
 
 public class ConversationDataRepo : IConversationDataRepo
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IConnectionMultiplexer _redis;
 
-    public ConversationDataRepo(ApplicationDbContext context) 
+    public ConversationDataRepo(IConnectionMultiplexer redis)
     {
-        _context = context;
+        _redis = redis;
     }
     
-    public async Task<ConversationData> CreateAddProductConversation(Update update)
+    public ConversationData? CreateAddProductConversation(Update update)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(x =>
-            update.Message != null && x.TgId == update.Message.Chat.Id);
+        var db = _redis.GetDatabase();
 
-        var conversation =
-            await _context.ProductConversations.FirstOrDefaultAsync(x => 
-                update.Message != null && x.User.TgId == update.Message.Chat.Id);
-        
-        if (conversation != null) return conversation;
+        var conversation = db.StringGet(update.Message?.Chat.Id.ToString());
+        if (!conversation.IsNullOrEmpty)
+        {
+            return JsonConvert.DeserializeObject<ConversationData>(conversation);
+        }
         
         var newConversation = new ConversationData()
         {
-            Id = new Guid(),
-            User = user,
+            UserId = update.Message.Chat.Id,
             CommandName = null,
             MealType = update.Message.Text,
             ProductId = 0,
             ConversationStage = 0
         };
+        
+        var serialConversation = JsonConvert.SerializeObject(newConversation);
+        db.StringSet(newConversation.UserId.ToString(), serialConversation);
 
-        var result = await _context.ProductConversations.AddAsync(newConversation);
-        await _context.SaveChangesAsync();
-
-        return result.Entity;
+        return newConversation;
     }
 
-    public async Task<ConversationData?>? GetAddProductConversation(long tgId)
+    public ConversationData? GetAddProductConversation(long tgId)
     {
-        var conversation = await _context.ProductConversations.FirstOrDefaultAsync(x => x.User.TgId == tgId);
-        if (conversation is null)
-        {
-            throw new NullBotException("ConversationData entity is not found.");
-        }
-        return conversation;
+        var db = _redis.GetDatabase();
+        var conversation = db.StringGet(tgId.ToString());
+
+        return !string.IsNullOrEmpty(conversation) ? JsonConvert.DeserializeObject<ConversationData>(conversation) : null;
     }
 
-    public async Task IncrementStage(long id)
+    public void IncrementStage(long id)
     {
+        var db = _redis.GetDatabase();
         var conversation = GetAddProductConversation(id);
-        if (conversation?.Result is not null)
+        if (conversation is not null)
         {
-         conversation.Result.ConversationStage++;
-         await _context.SaveChangesAsync();
+         conversation.ConversationStage++;
+         var serialConversation = JsonConvert.SerializeObject(conversation);
+         db.StringSet(id.ToString(), serialConversation);
         }
     }
     
-    public async Task DecrementStage(long id)
+    public void DecrementStage(long id)
     {
+        var db = _redis.GetDatabase();
         var conversation = GetAddProductConversation(id);
-        if (conversation?.Result != null && conversation.Result.ConversationStage != 0)
+        if (conversation is not null)
         {
-            conversation.Result.ConversationStage--;
-            await _context.SaveChangesAsync();
+            conversation.ConversationStage--;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(id.ToString(), serialConversation);
         }
     }
     
-    public async Task AddProductId(Update update, long id)
+    public void AddProductId(Update update, long id)
     {
-        if (update.Message?.Text != null)
+        if (update.Message?.Text == null) return;
+        
+        var db = _redis.GetDatabase();
+        var conversation = GetAddProductConversation(update.Message.Chat.Id);
+        if (conversation is not null)
         {
-            var conversation = GetAddProductConversation(update.Message.Chat.Id);
-            if (conversation?.Result is not null)
-            {
-                conversation.Result.ProductId = id;
-                await _context.SaveChangesAsync();
-            }
+            conversation.ProductId = id;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
         }
     }
 
-    public async Task AddCommandName(Update update)
+    public void AddCommandName(Update update)
     {
-        if (update.Message?.Text != null)
+        if (update.Message?.Text == null) return;
+        
+        var db = _redis.GetDatabase();
+        var conversation = GetAddProductConversation(update.Message.Chat.Id);
+        if (conversation is not null)
         {
-            var conversation = GetAddProductConversation(update.Message.Chat.Id);
-            if (conversation?.Result is not null)
-            {
-                conversation.Result.CommandName = update.Message.Text;
-                await _context.SaveChangesAsync();
-            }
+            conversation.CommandName = update.Message.Text;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
         }
     }
 
-    public async Task DeleteConversation(ConversationData? conversation)
+    public void DeleteConversation(ConversationData? conversation)
     {
-        _context.ProductConversations.Remove(conversation);
-        await _context.SaveChangesAsync();
+        var db = _redis.GetDatabase();
+        db.KeyDelete(conversation.UserId.ToString());
     }
 }

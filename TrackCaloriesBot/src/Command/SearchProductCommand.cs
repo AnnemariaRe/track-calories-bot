@@ -52,12 +52,12 @@ public class SearchProductCommand : ICommand
         }
         else
         {
-            var conversation = await _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is null) await _conversationRepo.CreateAddProductConversation(update);
+            var conversation = _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
+            if (conversation is null) _conversationRepo.CreateAddProductConversation(update);
             
             if (conversation?.CommandName is null)
             {
-                await _conversationRepo.AddCommandName(update);
+                _conversationRepo.AddCommandName(update);
             }
             
             long? productId = 0;
@@ -66,7 +66,7 @@ public class SearchProductCommand : ICommand
             switch (conversation.ConversationStage)
             {
                 case 0:
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
 
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -74,20 +74,20 @@ public class SearchProductCommand : ICommand
                         replyMarkup: InlineKeyboards.SearchInlineKeyboard);
                     break;
                 case 1:
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     goto case 2;
                 case 2:
                     if (text is "/continue")
                     {
-                        await _conversationRepo.IncrementStage(message.Chat.Id);
+                        _conversationRepo.IncrementStage(message.Chat.Id);
                         goto case 3;
                     }
                     if (text is "/search")
                     {
-                        var id1 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
-                        await _productRepo.DeleteProduct(id1);
-                        await _conversationRepo.AddProductId(update, 0);
-                        await _conversationRepo.DecrementStage(message.Chat.Id);
+                        var id1 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.ProductId;
+                        _productRepo.DeleteProduct(id1);
+                        _conversationRepo.AddProductId(update, 0);
+                        _conversationRepo.DecrementStage(message.Chat.Id);
                         goto case 0;
                     }
                     if (int.TryParse(message.Text, out var x))
@@ -95,7 +95,7 @@ public class SearchProductCommand : ICommand
                         var newProduct = await _productRepo.CreateProduct(update);
                         var productResult = _spoonacularRepo.GetProductInfo(x).Result;
 
-                        await _conversationRepo.AddProductId(update, newProduct.Id);
+                        _conversationRepo.AddProductId(update, newProduct.Id);
                         await _productRepo.AddProductInfoFromResponse(productResult, newProduct.Id);
                         var product = await _productRepo.GetProduct(newProduct.Id)!;
 
@@ -114,7 +114,7 @@ public class SearchProductCommand : ICommand
                     }
                     break;
                 case 3:
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
 
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -122,8 +122,8 @@ public class SearchProductCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 4:
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
-                    var id2 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
+                    _conversationRepo.IncrementStage(message.Chat.Id);
+                    var id2 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.ProductId;
                     await _productRepo.AddServingAmount(text, id2);
                     
                     if (_productRepo.GetProduct(productId)!.Result!.ServingAmount < 0)
@@ -138,7 +138,7 @@ public class SearchProductCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 5:
-                    var result = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.Result;
+                    var result = _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
                     await _productRepo.AddQuantity(text, result.ProductId);
                     
                     if (_productRepo.GetProduct(productId)!.Result!.Quantity < 0)
@@ -146,7 +146,7 @@ public class SearchProductCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.DeleteConversation(result);
+                    _conversationRepo.DeleteConversation(result);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,

@@ -32,8 +32,8 @@ public class BackCommand : ICommand
         }
         else
         {
-            var conversation = await _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is not null) await _conversationRepo.DeleteConversation(conversation);
+            var conversation = _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
+            if (conversation is not null) _conversationRepo.DeleteConversation(conversation);
 
             await client.SendTextMessageAsync(
             chatId: message.Chat.Id,

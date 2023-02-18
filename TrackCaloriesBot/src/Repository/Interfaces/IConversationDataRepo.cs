@@ -5,11 +5,11 @@ namespace TrackCaloriesBot.Repository.Interfaces;
 
 public interface IConversationDataRepo
 {
-    public Task<ConversationData> CreateAddProductConversation(Update update);
-    public Task<ConversationData?>? GetAddProductConversation(long tgId);
-    public Task IncrementStage(long id);
-    public Task DecrementStage(long id);
-    public Task AddCommandName(Update update);
-    public Task AddProductId(Update update, long id);
-    public Task DeleteConversation(ConversationData conversation);
+    public ConversationData? CreateAddProductConversation(Update update);
+    public ConversationData? GetAddProductConversation(long tgId);
+    public void IncrementStage(long id);
+    public void DecrementStage(long id);
+    public void AddCommandName(Update update);
+    public void AddProductId(Update update, long id);
+    public void DeleteConversation(ConversationData conversation);
 }

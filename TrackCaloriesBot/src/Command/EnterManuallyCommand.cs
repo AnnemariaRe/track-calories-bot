@@ -1,4 +1,4 @@
-using Telegram.Bot;
+ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -34,12 +34,12 @@ public class EnterManuallyCommand : ICommand
         }
         else
         {
-            var conversation = await _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is null) await _conversationRepo.CreateAddProductConversation(update);
+            var conversation = _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
+            if (conversation is null) _conversationRepo.CreateAddProductConversation(update);
             
             if (conversation?.CommandName is null)
             {
-                await _conversationRepo.AddCommandName(update);
+                _conversationRepo.AddCommandName(update);
             }
 
             long? productId = 0;
@@ -51,7 +51,7 @@ public class EnterManuallyCommand : ICommand
             switch (conversation.ConversationStage)
             {
                 case 0:
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -60,8 +60,8 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 1:
                     var product = await _productRepo.CreateProduct(update);
-                    await _conversationRepo.AddProductId(update, product.Id);
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.AddProductId(update, product.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -69,8 +69,8 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: InlineKeyboards.ServingTypeInlineKeyboard);
                     break;
                 case 2:
-                    await _productRepo.AddServingUnit(message.Text, productId);
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _productRepo.AddServingUnit(message.Text, productId);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -84,7 +84,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -98,7 +98,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -108,7 +108,7 @@ public class EnterManuallyCommand : ICommand
                 case 5:
                     if (update.CallbackQuery?.Data is "yes")
                     {
-                        await _conversationRepo.IncrementStage(message.Chat.Id);
+                        _conversationRepo.IncrementStage(message.Chat.Id);
                         await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: "Write protein amount (per 100 grams)",
@@ -119,7 +119,7 @@ public class EnterManuallyCommand : ICommand
                     {
                         for (var i = 0; i < 4; i++)
                         {
-                            await _conversationRepo.IncrementStage(message.Chat.Id);
+                            _conversationRepo.IncrementStage(message.Chat.Id);
                         }
                         goto case 9;
                     }
@@ -131,7 +131,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -145,7 +145,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -159,11 +159,11 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
 
                     goto case 9;
                 case 9:
-                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                                         
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -177,7 +177,7 @@ public class EnterManuallyCommand : ICommand
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationRepo.DeleteConversation(conversation);
+                    _conversationRepo.DeleteConversation(conversation);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
