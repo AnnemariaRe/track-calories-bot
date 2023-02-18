@@ -52,12 +52,7 @@ public class DayTotalDataRepo : IDayTotalDataRepo
         
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
                 x.Date == messageDate);
-        
-        if (dayTotalData is null)
-        {
-            throw new NullBotException("DayTotalData entity is not found.");
-        }
-        
+
         return dayTotalData;
     }
 
