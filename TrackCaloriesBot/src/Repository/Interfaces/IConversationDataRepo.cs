@@ -1,9 +1,9 @@
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
 
-namespace TrackCaloriesBot.Service.Interfaces;
+namespace TrackCaloriesBot.Repository.Interfaces;
 
-public interface IConversationDataService
+public interface IConversationDataRepo
 {
     public Task<ConversationData> CreateAddProductConversation(Update update);
     public Task<ConversationData?>? GetAddProductConversation(long tgId);

@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Context;
+using TrackCaloriesBot.Repository;
+using TrackCaloriesBot.Repository.Interfaces;
 using TrackCaloriesBot.Service;
 using TrackCaloriesBot.Service.Interfaces;
 
@@ -30,12 +33,12 @@ public class Startup
 
         services.AddSingleton<Bot>();
         services.AddSingleton<ICommandService, CommandService>();
-        services.AddSingleton<IUserService, UserService>();
-        services.AddSingleton<IDayTotalDataService, DayTotalDataService>();
-        services.AddSingleton<IMealDataService, MealDataService>();
-        services.AddSingleton<IProductService, ProductService>();
-        services.AddSingleton<IConversationDataService, ConversationDataService>();
-        services.AddSingleton<ISpoonacularService, SpoonacularService>();
+        services.AddSingleton<IUserRepo, UserRepo>();
+        services.AddSingleton<IDayTotalDataRepo, DayTotalDataRepo>();
+        services.AddSingleton<IMealDataRepo, MealDataRepo>();
+        services.AddSingleton<IProductRepo, ProductRepo>();
+        services.AddSingleton<IConversationDataRepo, ConversationDataRepo>();
+        services.AddSingleton<ISpoonacularRepo, SpoonacularRepo>();
         services.AddSingleton<ICommand, StartCommand>();
         services.AddSingleton<ICommand, RegisterCommand>();
         services.AddSingleton<ICommand, ShowUserInfoCommand>();

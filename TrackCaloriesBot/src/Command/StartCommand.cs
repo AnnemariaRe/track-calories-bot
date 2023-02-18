@@ -1,8 +1,7 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Service;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
@@ -10,16 +9,16 @@ public class StartCommand : ICommand
 {
     public string Key => Commands.StartCommand;
 
-    private readonly IUserService _userService;
+    private readonly IUserRepo _userRepo;
     
-    public StartCommand(IUserService userService)
+    public StartCommand(IUserRepo userRepo)
     {
-        _userService = userService;
+        _userRepo = userRepo;
     }
     
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
-        var userData = await _userService.GetUser(update.Message.Chat.Id)!;
+        var userData = await _userRepo.GetUser(update.Message.Chat.Id)!;
          
         if (userData is null)
         {

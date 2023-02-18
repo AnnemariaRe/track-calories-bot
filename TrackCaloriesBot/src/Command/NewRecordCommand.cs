@@ -2,25 +2,24 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Service;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
 public class NewRecordCommand : ICommand
 {
     public string Key => Commands.NewRecordCommand;
-    private readonly IUserService _userService;
+    private readonly IUserRepo _userRepo;
     
-    public NewRecordCommand(IUserService userService)
+    public NewRecordCommand(IUserRepo userRepo)
     {
-        _userService = userService;
+        _userRepo = userRepo;
     }
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
         var message = update.Type is UpdateType.CallbackQuery ? update.CallbackQuery?.Message! : update.Message!;
         
-        var userData = await _userService.GetUser(message.Chat.Id)!;
+        var userData = await _userRepo.GetUser(message.Chat.Id)!;
         
         if (userData is null)
         {

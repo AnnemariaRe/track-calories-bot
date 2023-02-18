@@ -1,24 +1,22 @@
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 using TrackCaloriesBot.Exceptions;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Repository;
 
-public class ProductService : IProductService
+public class ProductRepo : IProductRepo
 {
     private readonly ApplicationDbContext _context;
-    private readonly IMealDataService _mealDataService;
+    private readonly IMealDataRepo _mealDataRepo;
 
-    public ProductService(ApplicationDbContext context, IMealDataService mealDataService)
+    public ProductRepo(ApplicationDbContext context, IMealDataRepo mealDataRepo)
     {
         _context = context;
-        _mealDataService = mealDataService;
+        _mealDataRepo = mealDataRepo;
     }
     public async Task<Product> CreateProduct(Update update)
     {
@@ -33,7 +31,7 @@ public class ProductService : IProductService
             "Lunch" => MealType.Lunch,
             "Snack" => MealType.Snack
         };
-        var mealData = await _mealDataService.GetMealData(update, mealType);
+        var mealData = await _mealDataRepo.GetMealData(update, mealType);
         
         var product = await _context.Products.FirstOrDefaultAsync(
         x => update.Message != null && x.Name == update.Message.Text);
@@ -53,7 +51,7 @@ public class ProductService : IProductService
 
         var result = await _context.Products.AddAsync(newProduct);
         await _context.SaveChangesAsync();
-        await _mealDataService.AddNewProduct(newProduct, update);
+        await _mealDataRepo.AddNewProduct(newProduct, update);
 
         return result.Entity;
     }

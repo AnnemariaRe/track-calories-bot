@@ -3,29 +3,29 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InlineQueryResults;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
 public class SearchInlineQueryCommand : ICommand
 {
-    public SearchInlineQueryCommand(IConversationDataService conversationService, ISpoonacularService spoonacularService)
+    public SearchInlineQueryCommand(IConversationDataRepo conversationRepo, ISpoonacularRepo spoonacularRepo)
     {
-        _conversationService = conversationService;
-        _spoonacularService = spoonacularService;
+        _conversationRepo = conversationRepo;
+        _spoonacularRepo = spoonacularRepo;
     }
 
     public string Key => Commands.InlineCommand;
-    private readonly IConversationDataService _conversationService;
-    private readonly ISpoonacularService _spoonacularService;
+    private readonly IConversationDataRepo _conversationRepo;
+    private readonly ISpoonacularRepo _spoonacularRepo;
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
         if (update.Type == UpdateType.InlineQuery)
         {
-            var conversation = await _conversationService.GetAddProductConversation(update.InlineQuery.From.Id)!;
+            var conversation = await _conversationRepo.GetAddProductConversation(update.InlineQuery.From.Id)!;
             if (conversation?.ConversationStage is 1)
             {
-                var productsResult = _spoonacularService.GetProducts(update.InlineQuery.Query);
+                var productsResult = _spoonacularRepo.GetProducts(update.InlineQuery.Query);
                 var results = productsResult.Result
                     .Select(product =>
                         new InlineQueryResultArticle(product.Title.GetHashCode().ToString(), product.Title,

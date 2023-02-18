@@ -2,11 +2,11 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Entity;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Repository;
 
-public class SpoonacularService : ISpoonacularService
+public class SpoonacularRepo : ISpoonacularRepo
 {
     public async Task<IEnumerable<ResponseProduct>> GetProducts(string query)
     {

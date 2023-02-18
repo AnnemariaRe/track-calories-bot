@@ -1,8 +1,8 @@
 using TrackCaloriesBot.Entity;
 
-namespace TrackCaloriesBot.Service.Interfaces;
+namespace TrackCaloriesBot.Repository.Interfaces;
 
-public interface ISpoonacularService
+public interface ISpoonacularRepo
 {
     public Task<IEnumerable<ResponseProduct>> GetProducts(string query);
     public Task<ResponseProduct?> GetProductInfo(int id);

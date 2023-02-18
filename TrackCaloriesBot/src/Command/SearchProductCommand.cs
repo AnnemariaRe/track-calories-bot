@@ -1,29 +1,27 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Entity;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
 public class SearchProductCommand : ICommand
 {
-    public SearchProductCommand(IUserService userService, IConversationDataService conversationService, IProductService productService, ISpoonacularService spoonacularService)
+    public SearchProductCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo, IProductRepo productRepo, ISpoonacularRepo spoonacularRepo)
     {
-        _userService = userService;
-        _conversationService = conversationService;
-        _productService = productService;
-        _spoonacularService = spoonacularService;
+        _userRepo = userRepo;
+        _conversationRepo = conversationRepo;
+        _productRepo = productRepo;
+        _spoonacularRepo = spoonacularRepo;
     }
 
     public string Key => Commands.SearchProductsCommand;
-    private readonly IUserService _userService;
-    private readonly IConversationDataService _conversationService;
-    private readonly IProductService _productService;
-    private readonly ISpoonacularService _spoonacularService;
+    private readonly IUserRepo _userRepo;
+    private readonly IConversationDataRepo _conversationRepo;
+    private readonly IProductRepo _productRepo;
+    private readonly ISpoonacularRepo _spoonacularRepo;
     
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
@@ -43,7 +41,7 @@ public class SearchProductCommand : ICommand
                 throw new ArgumentOutOfRangeException();
         } 
         
-        var userData = await _userService.GetUser(message.Chat.Id)!;
+        var userData = await _userRepo.GetUser(message.Chat.Id)!;
         
         if (userData is null)
         {
@@ -54,12 +52,12 @@ public class SearchProductCommand : ICommand
         }
         else
         {
-            var conversation = await _conversationService.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is null) await _conversationService.CreateAddProductConversation(update);
+            var conversation = await _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
+            if (conversation is null) await _conversationRepo.CreateAddProductConversation(update);
             
             if (conversation?.CommandName is null)
             {
-                await _conversationService.AddCommandName(update);
+                await _conversationRepo.AddCommandName(update);
             }
             
             long? productId = 0;
@@ -68,7 +66,7 @@ public class SearchProductCommand : ICommand
             switch (conversation.ConversationStage)
             {
                 case 0:
-                    await _conversationService.IncrementStage(message.Chat.Id);
+                    await _conversationRepo.IncrementStage(message.Chat.Id);
 
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -76,30 +74,30 @@ public class SearchProductCommand : ICommand
                         replyMarkup: InlineKeyboards.SearchInlineKeyboard);
                     break;
                 case 1:
-                    await _conversationService.IncrementStage(message.Chat.Id);
+                    await _conversationRepo.IncrementStage(message.Chat.Id);
                     goto case 2;
                 case 2:
                     if (text is "/continue")
                     {
-                        await _conversationService.IncrementStage(message.Chat.Id);
+                        await _conversationRepo.IncrementStage(message.Chat.Id);
                         goto case 3;
                     }
                     if (text is "/search")
                     {
-                        var id1 = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
-                        await _productService.DeleteProduct(id1);
-                        await _conversationService.AddProductId(update, 0);
-                        await _conversationService.DecrementStage(message.Chat.Id);
+                        var id1 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
+                        await _productRepo.DeleteProduct(id1);
+                        await _conversationRepo.AddProductId(update, 0);
+                        await _conversationRepo.DecrementStage(message.Chat.Id);
                         goto case 0;
                     }
                     if (int.TryParse(message.Text, out var x))
                     {
-                        var newProduct = await _productService.CreateProduct(update);
-                        var productResult = _spoonacularService.GetProductInfo(x).Result;
+                        var newProduct = await _productRepo.CreateProduct(update);
+                        var productResult = _spoonacularRepo.GetProductInfo(x).Result;
 
-                        await _conversationService.AddProductId(update, newProduct.Id);
-                        await _productService.AddProductInfoFromResponse(productResult, newProduct.Id);
-                        var product = await _productService.GetProduct(newProduct.Id)!;
+                        await _conversationRepo.AddProductId(update, newProduct.Id);
+                        await _productRepo.AddProductInfoFromResponse(productResult, newProduct.Id);
+                        var product = await _productRepo.GetProduct(newProduct.Id)!;
 
                         var textMessage= $"<b>{product?.Name}</b> \n" + 
                                          "---------------------------------------\n" +
@@ -116,7 +114,7 @@ public class SearchProductCommand : ICommand
                     }
                     break;
                 case 3:
-                    await _conversationService.IncrementStage(message.Chat.Id);
+                    await _conversationRepo.IncrementStage(message.Chat.Id);
 
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
@@ -124,11 +122,11 @@ public class SearchProductCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 4:
-                    await _conversationService.IncrementStage(message.Chat.Id);
-                    var id2 = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
-                    await _productService.AddServingAmount(text, id2);
+                    await _conversationRepo.IncrementStage(message.Chat.Id);
+                    var id2 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.Result!.ProductId;
+                    await _productRepo.AddServingAmount(text, id2);
                     
-                    if (_productService.GetProduct(productId)!.Result!.ServingAmount < 0)
+                    if (_productRepo.GetProduct(productId)!.Result!.ServingAmount < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
@@ -140,15 +138,15 @@ public class SearchProductCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 5:
-                    var result = _conversationService.GetAddProductConversation(message.Chat.Id)!.Result;
-                    await _productService.AddQuantity(text, result.ProductId);
+                    var result = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.Result;
+                    await _productRepo.AddQuantity(text, result.ProductId);
                     
-                    if (_productService.GetProduct(productId)!.Result!.Quantity < 0)
+                    if (_productRepo.GetProduct(productId)!.Result!.Quantity < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    await _conversationService.DeleteConversation(result);
+                    await _conversationRepo.DeleteConversation(result);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,

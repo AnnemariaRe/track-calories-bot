@@ -3,15 +3,15 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Exceptions;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Repository;
 
-public class ConversationDataService : IConversationDataService
+public class ConversationDataRepo : IConversationDataRepo
 {
     private readonly ApplicationDbContext _context;
 
-    public ConversationDataService(ApplicationDbContext context) 
+    public ConversationDataRepo(ApplicationDbContext context) 
     {
         _context = context;
     }

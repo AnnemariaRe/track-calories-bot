@@ -2,27 +2,26 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Service;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
 public class BackCommand : ICommand
 {
     public string Key => Commands.BackCommand;
-    private readonly IUserService _userService;
-    private readonly IConversationDataService _conversationService;
+    private readonly IUserRepo _userRepo;
+    private readonly IConversationDataRepo _conversationRepo;
     
-    public BackCommand(IUserService userService, IConversationDataService conversationService)
+    public BackCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo)
     {
-        _userService = userService;
-        _conversationService = conversationService;
+        _userRepo = userRepo;
+        _conversationRepo = conversationRepo;
     }
     
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
         var message = update.Type is UpdateType.CallbackQuery ? update.CallbackQuery?.Message! : update.Message!;
-        var userData = await _userService.GetUser(message.Chat.Id)!;
+        var userData = await _userRepo.GetUser(message.Chat.Id)!;
         
         if (userData is null)
         {
@@ -33,8 +32,8 @@ public class BackCommand : ICommand
         }
         else
         {
-            var conversation = await _conversationService.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is not null) await _conversationService.DeleteConversation(conversation);
+            var conversation = await _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
+            if (conversation is not null) await _conversationRepo.DeleteConversation(conversation);
 
             await client.SendTextMessageAsync(
             chatId: message.Chat.Id,

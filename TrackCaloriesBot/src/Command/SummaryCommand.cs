@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Xml.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
-using TrackCaloriesBot.Service;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 
 namespace TrackCaloriesBot.Command;
@@ -15,20 +11,20 @@ namespace TrackCaloriesBot.Command;
 public class SummaryCommand : ICommand
 {
     public string Key => Commands.SummaryCommand;
-    private readonly IUserService _userService;
-    private readonly IDayTotalDataService _dayTotalDataService;
-    private readonly IMealDataService _mealDataService;
+    private readonly IUserRepo _userRepo;
+    private readonly IDayTotalDataRepo _dayTotalDataRepo;
+    private readonly IMealDataRepo _mealDataRepo;
     
-    public SummaryCommand(IUserService userService, IDayTotalDataService dayTotalDataService, IMealDataService mealDataService)
+    public SummaryCommand(IUserRepo userRepo, IDayTotalDataRepo dayTotalDataRepo, IMealDataRepo mealDataRepo)
     {
-        _userService = userService;
-        _dayTotalDataService = dayTotalDataService;
-        _mealDataService = mealDataService;
+        _userRepo = userRepo;
+        _dayTotalDataRepo = dayTotalDataRepo;
+        _mealDataRepo = mealDataRepo;
     }
 
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
-        var userData = await _userService.GetUser(update.Message.Chat.Id)!;
+        var userData = await _userRepo.GetUser(update.Message.Chat.Id)!;
 
         if (userData is null)
         {
@@ -48,7 +44,7 @@ public class SummaryCommand : ICommand
     
     private string BeautifulOutput(User userData, Update update)
     {
-        var dayTotal = _dayTotalDataService.GetDayTotalData(update);
+        var dayTotal = _dayTotalDataRepo.GetDayTotalData(update);
 
         if (dayTotal?.Result is null) return "No information for today :(";
         
@@ -57,10 +53,10 @@ public class SummaryCommand : ICommand
         var fatNeed = Math.Round(0.3 * caloriesNeed / 9);
         var carbsNeed = Math.Round(0.45 * caloriesNeed / 4);
         
-        var breakfastData = _dayTotalDataService.GetMealData(MealType.Breakfast, dayTotal.Result);
-        var lunchData = _dayTotalDataService.GetMealData(MealType.Lunch, dayTotal.Result);
-        var dinnerData = _dayTotalDataService.GetMealData(MealType.Dinner, dayTotal.Result);
-        var snackData = _dayTotalDataService.GetMealData(MealType.Snack, dayTotal.Result);
+        var breakfastData = _dayTotalDataRepo.GetMealData(MealType.Breakfast, dayTotal.Result);
+        var lunchData = _dayTotalDataRepo.GetMealData(MealType.Lunch, dayTotal.Result);
+        var dinnerData = _dayTotalDataRepo.GetMealData(MealType.Dinner, dayTotal.Result);
+        var snackData = _dayTotalDataRepo.GetMealData(MealType.Snack, dayTotal.Result);
         
         var mealDataCalories = new double[4];
         var mealDataProtein = new double[4];
@@ -69,49 +65,49 @@ public class SummaryCommand : ICommand
         
         if (breakfastData is { Result: { } })
         {
-            mealDataCalories[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
+            mealDataCalories[0] += _mealDataRepo.GetProducts(breakfastData.Result).Sum(product =>
                 product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataProtein[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
+            mealDataProtein[0] += _mealDataRepo.GetProducts(breakfastData.Result).Sum(product =>
                     product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataFat[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
+            mealDataFat[0] += _mealDataRepo.GetProducts(breakfastData.Result).Sum(product =>
                 product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataCarbs[0] += _mealDataService.GetProducts(breakfastData.Result).Sum(product =>
+            mealDataCarbs[0] += _mealDataRepo.GetProducts(breakfastData.Result).Sum(product =>
                 product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
 
         if (lunchData is { Result: { } })
         {
-            mealDataCalories[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
+            mealDataCalories[1] += _mealDataRepo.GetProducts(lunchData.Result).Sum(product =>
                 product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataProtein[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
+            mealDataProtein[1] += _mealDataRepo.GetProducts(lunchData.Result).Sum(product =>
                 product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataFat[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
+            mealDataFat[1] += _mealDataRepo.GetProducts(lunchData.Result).Sum(product =>
                 product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataCarbs[1] += _mealDataService.GetProducts(lunchData.Result).Sum(product =>
+            mealDataCarbs[1] += _mealDataRepo.GetProducts(lunchData.Result).Sum(product =>
                 product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
 
         if (dinnerData is { Result: { } })
         {
-            mealDataCalories[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
+            mealDataCalories[2] += _mealDataRepo.GetProducts(dinnerData.Result).Sum(product =>
                 product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataProtein[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
+            mealDataProtein[2] += _mealDataRepo.GetProducts(dinnerData.Result).Sum(product =>
                 product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataFat[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
+            mealDataFat[2] += _mealDataRepo.GetProducts(dinnerData.Result).Sum(product =>
                 product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataCarbs[2] += _mealDataService.GetProducts(dinnerData.Result).Sum(product =>
+            mealDataCarbs[2] += _mealDataRepo.GetProducts(dinnerData.Result).Sum(product =>
                 product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
         
         if (snackData is { Result: { } })
         {
-            mealDataCalories[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
+            mealDataCalories[3] += _mealDataRepo.GetProducts(snackData.Result).Sum(product =>
                 product.BaseCalories * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataProtein[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
+            mealDataProtein[3] += _mealDataRepo.GetProducts(snackData.Result).Sum(product =>
                 product.BaseProtein * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataFat[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
+            mealDataFat[3] += _mealDataRepo.GetProducts(snackData.Result).Sum(product =>
                 product.BaseFat * (product.ServingAmount / 100.0) * product.Quantity);
-            mealDataCarbs[3] += _mealDataService.GetProducts(snackData.Result).Sum(product =>
+            mealDataCarbs[3] += _mealDataRepo.GetProducts(snackData.Result).Sum(product =>
                 product.BaseCarbs * (product.ServingAmount / 100.0) * product.Quantity);
         }
         

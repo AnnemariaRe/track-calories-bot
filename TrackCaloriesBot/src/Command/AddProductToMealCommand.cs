@@ -2,29 +2,29 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Constant;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
 
 public class AddProductToMealCommand : ICommand
 {
     public string Key => Commands.AddProductToMealCommand;
-    private readonly IUserService _userService;
-    private readonly IConversationDataService _conversationService;
-    private readonly IDayTotalDataService _dayTotalDataService;
-    private readonly IMealDataService _mealDataService;
+    private readonly IUserRepo _userRepo;
+    private readonly IConversationDataRepo _conversationRepo;
+    private readonly IDayTotalDataRepo _dayTotalDataRepo;
+    private readonly IMealDataRepo _mealDataRepo;
     
-    public AddProductToMealCommand(IUserService userService, IConversationDataService conversationService, IDayTotalDataService dayTotalDataService, IMealDataService mealDataService)
+    public AddProductToMealCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo, IDayTotalDataRepo dayTotalDataRepo, IMealDataRepo mealDataRepo)
     {
-        _userService = userService;
-        _conversationService = conversationService;
-        _dayTotalDataService = dayTotalDataService;
-        _mealDataService = mealDataService;
+        _userRepo = userRepo;
+        _conversationRepo = conversationRepo;
+        _dayTotalDataRepo = dayTotalDataRepo;
+        _mealDataRepo = mealDataRepo;
     }
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
         var message = update.Type is UpdateType.CallbackQuery ? update.CallbackQuery?.Message! : update.Message!;
-        var userData = await _userService.GetUser(message.Chat.Id)!;
+        var userData = await _userRepo.GetUser(message.Chat.Id)!;
         
         if (userData is null)
         {
@@ -35,12 +35,12 @@ public class AddProductToMealCommand : ICommand
         }
         else
         {
-            if (await _dayTotalDataService.GetDayTotalData(update) is null)
-                await _dayTotalDataService.AddNewDayTotalData(update);
+            if (await _dayTotalDataRepo.GetDayTotalData(update) is null)
+                await _dayTotalDataRepo.AddNewDayTotalData(update);
             
-            await _conversationService.CreateAddProductConversation(update);
-            await _mealDataService.AddNewMealData(update);
-            await _dayTotalDataService.AddNewMealType(update);
+            await _conversationRepo.CreateAddProductConversation(update);
+            await _mealDataRepo.AddNewMealData(update);
+            await _dayTotalDataRepo.AddNewMealType(update);
 
             await client.SendTextMessageAsync(
                 chatId: message.Chat.Id,

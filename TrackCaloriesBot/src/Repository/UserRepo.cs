@@ -4,16 +4,16 @@ using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 using TrackCaloriesBot.Exceptions;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Repository;
 
-public class UserService : IUserService
+public class UserRepo : IUserRepo
 {
     private readonly ApplicationDbContext _context;
 
-    public UserService(ApplicationDbContext context) 
+    public UserRepo(ApplicationDbContext context) 
     {
         _context = context;
     }

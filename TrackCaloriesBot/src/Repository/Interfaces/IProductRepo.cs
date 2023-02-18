@@ -1,9 +1,9 @@
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
 
-namespace TrackCaloriesBot.Service.Interfaces;
+namespace TrackCaloriesBot.Repository.Interfaces;
 
-public interface IProductService
+public interface IProductRepo
 {
     public Task<Product> CreateProduct(Update update);
     public Task<Product?> GetProduct(long? id);

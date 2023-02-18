@@ -4,15 +4,15 @@ using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 using TrackCaloriesBot.Exceptions;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Repository;
 
-public class MealDataService : IMealDataService
+public class MealDataRepo : IMealDataRepo
 {
     private readonly ApplicationDbContext _context;
 
-    public MealDataService(ApplicationDbContext context)
+    public MealDataRepo(ApplicationDbContext context)
     {
         _context = context;
     }

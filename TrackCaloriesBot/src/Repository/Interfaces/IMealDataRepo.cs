@@ -2,9 +2,9 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 
-namespace TrackCaloriesBot.Service.Interfaces;
+namespace TrackCaloriesBot.Repository.Interfaces;
 
-public interface IMealDataService
+public interface IMealDataRepo
 {
     public Task<MealData> AddNewMealData(Update update);
     public Task<MealData?> GetMealData(Update update, MealType mealType);

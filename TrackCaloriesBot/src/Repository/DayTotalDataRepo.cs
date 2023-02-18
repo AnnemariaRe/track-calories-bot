@@ -4,21 +4,21 @@ using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 using TrackCaloriesBot.Exceptions;
-using TrackCaloriesBot.Service.Interfaces;
+using TrackCaloriesBot.Repository.Interfaces;
 
-namespace TrackCaloriesBot.Service;
+namespace TrackCaloriesBot.Repository;
 
-public class DayTotalDataService : IDayTotalDataService
+public class DayTotalDataRepo : IDayTotalDataRepo
 {
     private readonly ApplicationDbContext _context;
-    private readonly IMealDataService _mealDataService;
-    private readonly IUserService _userService;
+    private readonly IMealDataRepo _mealDataRepo;
+    private readonly IUserRepo _userRepo;
 
-    public DayTotalDataService(ApplicationDbContext context, IMealDataService mealDataService, IUserService userService)
+    public DayTotalDataRepo(ApplicationDbContext context, IMealDataRepo mealDataRepo, IUserRepo userRepo)
     {
         _context = context;
-        _mealDataService = mealDataService;
-        _userService = userService;
+        _mealDataRepo = mealDataRepo;
+        _userRepo = userRepo;
     }
     
     public async Task<DayTotalData> AddNewDayTotalData(Update update)
@@ -38,7 +38,7 @@ public class DayTotalDataService : IDayTotalDataService
             Date = messageDate
         };
 
-        await _userService.AddDayTotalData(dayTotalData, update);
+        await _userRepo.AddDayTotalData(dayTotalData, update);
         
         var result = await _context.DayTotalData.AddAsync(newDayTotalData);
         await _context.SaveChangesAsync();
@@ -88,22 +88,22 @@ public class DayTotalDataService : IDayTotalDataService
             if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Breakfast) == null &&
                 update.Message.Text == "Breakfast")
             {
-                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+                dayTotalData.Result.MealData.Add(_mealDataRepo.AddNewMealData(update).Result);
             } 
             if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Lunch) == null &&
                 update.Message.Text == "Lunch")
             {
-                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+                dayTotalData.Result.MealData.Add(_mealDataRepo.AddNewMealData(update).Result);
             }
             if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Dinner) == null &&
                 update.Message.Text == "Dinner")
             {
-                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+                dayTotalData.Result.MealData.Add(_mealDataRepo.AddNewMealData(update).Result);
             }
             if (dayTotalData.Result.MealData.FirstOrDefault(x => x.MealType == MealType.Snack) == null &&
                 update.Message.Text == "Snack")
             {
-                dayTotalData.Result.MealData.Add(_mealDataService.AddNewMealData(update).Result);
+                dayTotalData.Result.MealData.Add(_mealDataRepo.AddNewMealData(update).Result);
             }
         }
         await _context.SaveChangesAsync();

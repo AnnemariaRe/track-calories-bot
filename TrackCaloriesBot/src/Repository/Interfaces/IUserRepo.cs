@@ -2,9 +2,9 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
 using User = TrackCaloriesBot.Entity.User;
 
-namespace TrackCaloriesBot.Service.Interfaces;
+namespace TrackCaloriesBot.Repository.Interfaces;
 
-public interface IUserService
+public interface IUserRepo
 {
     public Task<User> CreateUser(Update update);
     public Task<User?> GetUser(long id);

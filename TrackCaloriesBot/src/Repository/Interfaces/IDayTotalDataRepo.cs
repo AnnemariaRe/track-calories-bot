@@ -2,9 +2,9 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
 
-namespace TrackCaloriesBot.Service.Interfaces;
+namespace TrackCaloriesBot.Repository.Interfaces;
 
-public interface IDayTotalDataService
+public interface IDayTotalDataRepo
 {
     public Task<DayTotalData> AddNewDayTotalData(Update update);
     public Task<DayTotalData?>? GetDayTotalData(Update update);
