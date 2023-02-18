@@ -89,18 +89,6 @@ public class CommandService : ICommandService
             case Commands.RegisterCommand:
                 await ExecuteCommand(Commands.RegisterCommand, id, update, client);
                 break;
-            // case Commands.NewRecordCommand:
-            //     if (messageText is "Breakfast" or "Lunch" or "Dinner" or "Snack")
-            //     {
-            //         await ExecuteCommand(Commands.AddProductToMealCommand, id, update, client);
-            //     }
-            //     break;
-            case Commands.AddWaterCommand:
-                if (messageText != Commands.AddWaterCommand)
-                {
-                    await ExecuteCommand(Commands.AddWaterCommand, id, update, client);
-                }
-                break;
             case Commands.EnterManuallyCommand:
                 if (messageText != Commands.EnterManuallyCommand || callbackQuery.Data != Commands.EnterManuallyCommand)
                 {
