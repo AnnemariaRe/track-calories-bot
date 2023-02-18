@@ -4,6 +4,8 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Constant;
+using TrackCaloriesBot.Entity;
+using TrackCaloriesBot.Repository.Interfaces;
 using TrackCaloriesBot.Service.Interfaces;
 
 namespace TrackCaloriesBot.Service;
@@ -11,102 +13,113 @@ namespace TrackCaloriesBot.Service;
 public class CommandService : ICommandService
 {
     private readonly List<ICommand> _commands;
-    private ICommand? _lastCommand;
+    private readonly ICommandRepo _commandRepo;
 
-    public CommandService(IServiceProvider serviceProvider)
+    public CommandService(IServiceProvider serviceProvider, ICommandRepo commandRepo)
     {
+        _commandRepo = commandRepo;
         _commands = serviceProvider.GetServices<ICommand>().ToList();
     }
     
     public async Task Execute(Update? update, TelegramBotClient client)
     {
-        if (update is { Type: UpdateType.InlineQuery, InlineQuery.Query.Length: > 3 and < 15 })
+        var id = update.Type switch
         {
-            await ExecuteCommand(Commands.InlineCommand, update, client);
-            return;
-        }
-
-        var messageText = update?.Message?.Text;
-        var callbackQuery = update?.CallbackQuery;
-
-        if (messageText is null && callbackQuery is null)
-            return;
-
-        if (update is { Type: UpdateType.CallbackQuery })
+            UpdateType.Message => update.Message?.Chat.Id,
+            UpdateType.CallbackQuery => update.CallbackQuery?.Message?.Chat.Id,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        
+        switch (update)
         {
-            if (callbackQuery?.Data != null && callbackQuery.Data.Contains(Commands.RegisterCommand))
+            case { Type: UpdateType.InlineQuery, InlineQuery.Query.Length: > 3 and < 10 }:
+                await ExecuteCommand(Commands.InlineCommand, id, update, client);
+                return;
+            case { Type: UpdateType.CallbackQuery }:
             {
-                await ExecuteCommand(Commands.RegisterCommand, update, client);
+                if (update.CallbackQuery?.Data != null && update.CallbackQuery.Data.Contains(Commands.RegisterCommand))
+                {
+                    await ExecuteCommand(Commands.RegisterCommand, id, update, client);
+                }
+
+                break;
             }
         }
+        
+        var messageText = update?.Message?.Text;
+        var callbackQuery = update?.CallbackQuery;
+        
+        if (messageText is null && callbackQuery is null)
+            return;
         
         switch (messageText)
         {
             case Commands.StartCommand:
-                await ExecuteCommand(Commands.StartCommand, update, client);
+                await ExecuteCommand(Commands.StartCommand, id, update, client);
                 return;
             case Commands.ShowUserInfoCommand:
-                await ExecuteCommand(Commands.ShowUserInfoCommand, update, client);
+                await ExecuteCommand(Commands.ShowUserInfoCommand, id, update, client);
                 return;
             case Commands.SummaryCommand:
-                await ExecuteCommand(Commands.SummaryCommand, update, client);
+                await ExecuteCommand(Commands.SummaryCommand, id, update, client);
                 return;
             case Commands.NewRecordCommand:
-                await ExecuteCommand(Commands.NewRecordCommand, update, client);
+                await ExecuteCommand(Commands.NewRecordCommand, id, update, client);
                 return;
             case Commands.AddWaterCommand:
-                await ExecuteCommand(Commands.AddWaterCommand, update, client);
+                await ExecuteCommand(Commands.AddWaterCommand, id, update, client);
                 return;
             case Commands.BackCommand or Commands.DefaultBackCommand:
-                await ExecuteCommand(Commands.BackCommand, update, client);
+                await ExecuteCommand(Commands.BackCommand, id, update, client);
                 return;
             case Commands.EnterManuallyCommand:
-                await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
+                await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
                 return;
             case Commands.SearchProductsCommand:
-                await ExecuteCommand(Commands.SearchProductsCommand, update, client);
+                await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
                 return;
             case "Breakfast" or "Lunch" or "Dinner" or "Snack":
-                await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
+                await ExecuteCommand(Commands.AddProductToMealCommand, id, update, client);
                 return;
         }
 
-        switch (_lastCommand?.Key)
+        var lastCommand = _commandRepo.GetLastCommand(id.ToString());
+        switch (lastCommand?.CommandKey)
         {
             case Commands.RegisterCommand:
-                await ExecuteCommand(Commands.RegisterCommand, update, client);
+                await ExecuteCommand(Commands.RegisterCommand, id, update, client);
                 break;
-            case Commands.NewRecordCommand:
-                if (messageText is "Breakfast" or "Lunch" or "Dinner" or "Snack")
-                {
-                    await ExecuteCommand(Commands.AddProductToMealCommand, update, client);
-                }
-                break;
+            // case Commands.NewRecordCommand:
+            //     if (messageText is "Breakfast" or "Lunch" or "Dinner" or "Snack")
+            //     {
+            //         await ExecuteCommand(Commands.AddProductToMealCommand, id, update, client);
+            //     }
+            //     break;
             case Commands.AddWaterCommand:
                 if (messageText != Commands.AddWaterCommand)
                 {
-                    await ExecuteCommand(Commands.AddWaterCommand, update, client);
+                    await ExecuteCommand(Commands.AddWaterCommand, id, update, client);
                 }
                 break;
             case Commands.EnterManuallyCommand:
                 if (messageText != Commands.EnterManuallyCommand || callbackQuery.Data != Commands.EnterManuallyCommand)
                 {
-                    await ExecuteCommand(Commands.EnterManuallyCommand, update, client);
+                    await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
                 }
                 break;
             case Commands.InlineCommand:
-                await ExecuteCommand(Commands.SearchProductsCommand, update, client);
+                await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
                 break;
             case Commands.SearchProductsCommand:
-                await ExecuteCommand(Commands.SearchProductsCommand, update, client);
+                await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
                 break;
         }
     }
 
-    private async Task ExecuteCommand(string key, Update? update, ITelegramBotClient client)
+    private async Task ExecuteCommand(string key, long? id, Update? update, ITelegramBotClient client)
     {
-        _lastCommand = _commands.First(x => x.Key == key);
-        await _lastCommand.Execute(update, client);
+        _commandRepo.AddCommand(new LastCommand(id.ToString(), key));
+        await _commands.First(x => x.Key == key).Execute(update,client);
     }
 
 }
