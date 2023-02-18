@@ -30,6 +30,9 @@ public class Startup
         
         services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
             _configuration.GetConnectionString("Db")));
+        
+        services.AddSingleton<IConnectionMultiplexer>(options =>
+            ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis")));
 
         services.AddSingleton<Bot>();
         services.AddSingleton<ICommandService, CommandService>();
