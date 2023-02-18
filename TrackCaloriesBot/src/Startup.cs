@@ -42,6 +42,7 @@ public class Startup
         services.AddSingleton<IProductRepo, ProductRepo>();
         services.AddSingleton<IConversationDataRepo, ConversationDataRepo>();
         services.AddSingleton<ISpoonacularRepo, SpoonacularRepo>();
+        services.AddSingleton<ICommandRepo, CommandRepo>();
         services.AddSingleton<ICommand, StartCommand>();
         services.AddSingleton<ICommand, RegisterCommand>();
         services.AddSingleton<ICommand, ShowUserInfoCommand>();
