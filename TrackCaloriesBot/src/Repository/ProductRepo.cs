@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
@@ -11,18 +13,20 @@ namespace TrackCaloriesBot.Repository;
 public class ProductRepo : IProductRepo
 {
     private readonly ApplicationDbContext _context;
+    private readonly IConnectionMultiplexer _redis;
     private readonly IMealDataRepo _mealDataRepo;
 
-    public ProductRepo(ApplicationDbContext context, IMealDataRepo mealDataRepo)
+    public ProductRepo(ApplicationDbContext context, IMealDataRepo mealDataRepo, IConnectionMultiplexer redis)
     {
         _context = context;
         _mealDataRepo = mealDataRepo;
+        _redis = redis;
     }
     public async Task<Product> CreateProduct(Update update)
     {
-        var conversation =
-            await _context.ProductConversations.FirstOrDefaultAsync( x => 
-                update.Message != null && x.UserId == update.Message.Chat.Id);
+        var db = _redis.GetDatabase();
+        var redisConveration = db.StringGet(update.Message.Chat.Id.ToString());
+        var conversation = JsonConvert.DeserializeObject<ConversationData>(redisConveration);
 
         var mealType = conversation?.MealType switch
         {

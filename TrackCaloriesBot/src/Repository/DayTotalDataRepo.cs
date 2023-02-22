@@ -61,10 +61,6 @@ public class DayTotalDataRepo : IDayTotalDataRepo
         var mealData = _context.MealData.FirstOrDefault(x =>
             x.DayTotalData != null && x.DayTotalData.DayId == dayTotalData.DayId && x.MealType == mealType);
 
-        if (mealData is null)
-        {
-            throw new NullBotException("MealData entity is not found.");
-        }
         return mealData;
     }
 

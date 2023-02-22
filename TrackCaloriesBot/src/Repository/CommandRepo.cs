@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using TrackCaloriesBot.Command;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Repository.Interfaces;
 
@@ -25,13 +24,13 @@ public class CommandRepo : ICommandRepo
         var db = _redis.GetDatabase();
         var serialCommand = JsonConvert.SerializeObject(newCommand);
 
-        db.StringSet(newCommand.UserId, serialCommand);
+        db.StringSet("c"+newCommand.UserId, serialCommand);
     }
 
     public LastCommand? GetLastCommand(string userId)
     {
         var db = _redis.GetDatabase();
-        var command = db.StringGet(userId);
+        var command = db.StringGet("c"+userId);
 
         return !string.IsNullOrEmpty(command) ? JsonConvert.DeserializeObject<LastCommand>(command) : null;
     }
