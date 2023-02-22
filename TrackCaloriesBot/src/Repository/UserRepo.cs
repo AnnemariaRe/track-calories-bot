@@ -157,20 +157,6 @@ public class UserRepo : IUserRepo
         }
     }
 
-    public async Task AddProjectedProgress(Update update)
-    {
-        var user = GetUser(update.Message.Chat.Id);
-        if (user?.Result is not null)
-        {
-            var check = float.TryParse(update.Message.Text, out var x);
-            if (check)
-            {
-                user.Result.ProjectedProgress = x; 
-                await _context.SaveChangesAsync();
-            }
-        }
-    }
-
     public async Task AddActivityLevel(Update update)
     {
         var user = GetUser(update.Message.Chat.Id);
@@ -200,11 +186,6 @@ public class UserRepo : IUserRepo
     public async Task<User?> GetUser(long id)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.TgId == id);
-        if (user is null)
-        {
-            throw new NullBotException("User entity is not found.");
-        }
-        
         return user;
     }
     

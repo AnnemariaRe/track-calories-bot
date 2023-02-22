@@ -27,6 +27,7 @@ public class CommandService : ICommandService
         {
             UpdateType.Message => update.Message?.Chat.Id,
             UpdateType.CallbackQuery => update.CallbackQuery?.Message?.Chat.Id,
+            UpdateType.InlineQuery => update.InlineQuery?.From.Id,
             _ => throw new ArgumentOutOfRangeException()
         };
         

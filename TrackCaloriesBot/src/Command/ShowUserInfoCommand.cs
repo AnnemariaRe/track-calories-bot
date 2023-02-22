@@ -35,13 +35,13 @@ public class ShowUserInfoCommand : ICommand
         var names = new List<string>()
         {
             "Name", "Age", "Gender", "Goal", "Weight", "Height", 
-            "Goal weight", "Goal progress", "Activity level"
+            "Goal weight", "Activity level"
         };
         var data = new List<string>()
         {
             $"{userData.Name}", $"{userData.Age} years", $"{userData.Gender}", $"{userData.Goal} weight", 
             $"{userData.Weight} kg", $"{userData.Height} cm", $"{userData.GoalWeight} kg", 
-            $"{userData.ProjectedProgress} kg/week", $"{userData.ActivityLevel}"
+            $"{userData.ActivityLevel}"
         };
 
         var maxNameLength = names.Select(name => name.Length).Max();

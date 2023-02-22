@@ -1,10 +1,7 @@
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using Telegram.Bot.Types;
-using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
-using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Repository;
@@ -57,9 +54,9 @@ public class ConversationDataRepo : IConversationDataRepo
         var conversation = GetAddProductConversation(id);
         if (conversation is not null)
         {
-         conversation.ConversationStage++;
-         var serialConversation = JsonConvert.SerializeObject(conversation);
-         db.StringSet(id.ToString(), serialConversation);
+            conversation.ConversationStage++;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(id.ToString(), serialConversation);
         }
     }
     

@@ -123,29 +123,13 @@ public class RegisterCommand : ICommand
                     break;
                 }
                 await _userRepo.IncrementStage(update);
-                    
-                await client.SendTextMessageAsync(
-                    chatId: message.Chat.Id,
-                    text: "Write your projected progress in kg for week \n (example: 0.5)");
-                break;
-            case 8:
-                await _userRepo.AddProjectedProgress(update);
-                if (userData.ProjectedProgress is < 0 or >= 1)
-                {
-                    await client.SendTextMessageAsync(
-                        chatId: message.Chat.Id,
-                        text: "Inappropriate output. A number should be between 0 and 1 kg.\n" +
-                              "Try one more time");
-                    break;
-                }
-                await _userRepo.IncrementStage(update);
-                    
+
                 await client.SendTextMessageAsync(
                     chatId: message.Chat.Id,
                     text: "Choose your activity level",
                     replyMarkup: KeyboardMarkups.ActivityKeyboardMarkup);
                 break;
-            case 9:
+            case 8:
                 await _userRepo.AddActivityLevel(update);
                 await _userRepo.IncrementStage(update);
                     
