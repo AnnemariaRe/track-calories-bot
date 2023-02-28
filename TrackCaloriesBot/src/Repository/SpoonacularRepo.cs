@@ -1,7 +1,9 @@
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TrackCaloriesBot.Constant;
 using TrackCaloriesBot.Entity;
+using TrackCaloriesBot.Entity.Requests;
 using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Repository;
@@ -24,7 +26,7 @@ public class SpoonacularRepo : ISpoonacularRepo
         if (response.IsSuccessStatusCode)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
-            var productList = JsonConvert.DeserializeObject<ResponseProductList>(jsonString);
+            var productList = JsonConvert.DeserializeObject<ResponseItemList>(jsonString);
 
             if (productList != null)
             {
@@ -60,5 +62,54 @@ public class SpoonacularRepo : ISpoonacularRepo
         }
 
         return product;
+    }
+
+    public async Task<IEnumerable<ResponseItem>> GetRecipes(RequestRecipe request, string query)
+    {
+        var recipes = new List<ResponseItem>();
+        
+        var url = "https://api.spoonacular.com/recipes/complexSearch?";
+        var parameters =
+            $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&equipment={request.Equipments}&includeIngredients={request.Ingredients}&maxReadyTime={request.MaxReadyTime}&number=10";
+
+        var client = new HttpClient();
+        client.BaseAddress = new Uri(url);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await client.GetAsync(parameters).ConfigureAwait(false);  
+       
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            var recipeList = JsonConvert.DeserializeObject<ResponseItemList>(jsonString);
+
+            if (recipeList != null) recipes.AddRange(recipeList.Items);
+        }
+        
+        return recipes;
+    }
+
+    public async Task<ResponseRecipe?> GetRecipeInfo(int id)
+    {
+        var url = "https://api.spoonacular.com/recipes/";
+        var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}";
+        
+        var client = new HttpClient();
+        client.BaseAddress = new Uri(url);
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await client.GetAsync(parameters).ConfigureAwait(false);
+
+        var ingredient = new ResponseRecipe();
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            ingredient = JsonConvert.DeserializeObject<ResponseRecipe>(jsonString);
+            var data = JsonConvert.DeserializeObject<JObject>(jsonString);
+            ingredient.WeightPerServing = data.SelectToken(
+                "nutrition.weightPerServing.amount").Value<int>();
+        }
+
+        return ingredient;
     }
 }

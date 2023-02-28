@@ -15,4 +15,7 @@ public class ResponseItem
     [JsonProperty("nutrition")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public ResponseNutrition Nutrition { get; set; }
+    [JsonProperty("original")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string OriginalName { get; set; }
 }
