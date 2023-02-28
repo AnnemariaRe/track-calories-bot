@@ -15,7 +15,7 @@ public class ConversationDataRepo : IConversationDataRepo
         _redis = redis;
     }
     
-    public ConversationData? CreateAddProductConversation(Update update)
+    public ConversationData? CreateConversation(Update update)
     {
         var db = _redis.GetDatabase();
 
@@ -40,7 +40,7 @@ public class ConversationDataRepo : IConversationDataRepo
         return newConversation;
     }
 
-    public ConversationData? GetAddProductConversation(long tgId)
+    public ConversationData? GetConversationData(long tgId)
     {
         var db = _redis.GetDatabase();
         var conversation = db.StringGet(tgId.ToString());
@@ -51,7 +51,7 @@ public class ConversationDataRepo : IConversationDataRepo
     public void IncrementStage(long id)
     {
         var db = _redis.GetDatabase();
-        var conversation = GetAddProductConversation(id);
+        var conversation = GetConversationData(id);
         if (conversation is not null)
         {
             conversation.ConversationStage++;
@@ -63,7 +63,7 @@ public class ConversationDataRepo : IConversationDataRepo
     public void DecrementStage(long id)
     {
         var db = _redis.GetDatabase();
-        var conversation = GetAddProductConversation(id);
+        var conversation = GetConversationData(id);
         if (conversation is not null)
         {
             conversation.ConversationStage--;
@@ -72,12 +72,12 @@ public class ConversationDataRepo : IConversationDataRepo
         }
     }
     
-    public void AddProductId(Update update, long id)
+    public void AddItemId(Update update, long id)
     {
         if (update.Message?.Text == null) return;
         
         var db = _redis.GetDatabase();
-        var conversation = GetAddProductConversation(update.Message.Chat.Id);
+        var conversation = GetConversationData(update.Message.Chat.Id);
         if (conversation is not null)
         {
             conversation.ItemId = id;
@@ -91,7 +91,7 @@ public class ConversationDataRepo : IConversationDataRepo
         if (update.Message?.Text == null) return;
         
         var db = _redis.GetDatabase();
-        var conversation = GetAddProductConversation(update.Message.Chat.Id);
+        var conversation = GetConversationData(update.Message.Chat.Id);
         if (conversation is not null)
         {
             conversation.CommandName = update.Message.Text;

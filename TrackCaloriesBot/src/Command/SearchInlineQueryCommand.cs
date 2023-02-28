@@ -22,7 +22,7 @@ public class SearchInlineQueryCommand : ICommand
     {
         if (update.Type == UpdateType.InlineQuery)
         {
-            var conversation = _conversationRepo.GetAddProductConversation(update.InlineQuery.From.Id)!;
+            var conversation = _conversationRepo.GetConversationData(update.InlineQuery.From.Id)!;
             if (conversation?.ConversationStage is 1)
             {
                 var productsResult = _spoonacularRepo.GetProducts(update.InlineQuery.Query);

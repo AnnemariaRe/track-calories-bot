@@ -38,7 +38,7 @@ public class AddProductToMealCommand : ICommand
             if (await _dayTotalDataRepo.GetDayTotalData(update)! is null)
                 await _dayTotalDataRepo.AddNewDayTotalData(update);
             
-            _conversationRepo.CreateAddProductConversation(update);
+            _conversationRepo.CreateConversation(update);
             await _mealDataRepo.AddNewMealData(update);
             await _dayTotalDataRepo.AddNewMealType(update);
 

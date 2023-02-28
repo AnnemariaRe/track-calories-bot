@@ -34,8 +34,8 @@ public class EnterManuallyCommand : ICommand
         }
         else
         {
-            var conversation = _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
-            if (conversation is null) _conversationRepo.CreateAddProductConversation(update);
+            var conversation = _conversationRepo.GetConversationData(message.Chat.Id)!;
+            if (conversation is null) _conversationRepo.CreateConversation(update);
             
             if (conversation?.CommandName is null)
             {
@@ -60,7 +60,7 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 1:
                     var product = await _productRepo.CreateProduct(update);
-                    _conversationRepo.AddProductId(update, product.Id);
+                    _conversationRepo.AddItemId(update, product.Id);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
