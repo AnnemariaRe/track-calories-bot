@@ -5,7 +5,7 @@ namespace TrackCaloriesBot.Entity;
 [Serializable]
 public class ResponseNutrient
 {
-    public ResponseProduct Product { get; set; }
+    public ResponseItem Item { get; set; }
     [JsonProperty("name")]
     public string Name { get; set; }
     [JsonProperty("amount")]

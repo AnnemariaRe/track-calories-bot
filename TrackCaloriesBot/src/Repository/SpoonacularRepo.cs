@@ -8,9 +8,9 @@ namespace TrackCaloriesBot.Repository;
 
 public class SpoonacularRepo : ISpoonacularRepo
 {
-    public async Task<IEnumerable<ResponseProduct>> GetProducts(string query)
+    public async Task<IEnumerable<ResponseItem>> GetProducts(string query)
     {
-        var products = new List<ResponseProduct>();
+        var products = new List<ResponseItem>();
         
         var url = "https://api.spoonacular.com/food/ingredients/search";
         var parameters = $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&number=15";
@@ -28,7 +28,7 @@ public class SpoonacularRepo : ISpoonacularRepo
 
             if (productList != null)
             {
-                products.AddRange(productList.Products);
+                products.AddRange(productList.Items);
                 string str;
                 foreach (var product in products)
                 {
@@ -41,7 +41,7 @@ public class SpoonacularRepo : ISpoonacularRepo
         return products;
     }
 
-    public async Task<ResponseProduct?> GetProductInfo(int id)
+    public async Task<ResponseItem?> GetProductInfo(int id)
     {
         var url = "https://api.spoonacular.com/food/ingredients/";
         var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}&amount=100&unit=g";
@@ -52,11 +52,11 @@ public class SpoonacularRepo : ISpoonacularRepo
 
         var response = await client.GetAsync(parameters).ConfigureAwait(false);
 
-        var product = new ResponseProduct();
+        var product = new ResponseItem();
         if (response.IsSuccessStatusCode)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
-            product = JsonConvert.DeserializeObject<ResponseProduct>(jsonString);
+            product = JsonConvert.DeserializeObject<ResponseItem>(jsonString);
         }
 
         return product;

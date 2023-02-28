@@ -6,5 +6,5 @@ namespace TrackCaloriesBot.Entity;
 public class ResponseProductList
 {
     [JsonProperty("results")]
-    public IEnumerable<ResponseProduct> Products { get; set; }
+    public IEnumerable<ResponseItem> Items { get; set; }
 }

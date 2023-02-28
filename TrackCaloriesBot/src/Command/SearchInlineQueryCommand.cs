@@ -29,7 +29,7 @@ public class SearchInlineQueryCommand : ICommand
                 var results = productsResult.Result
                     .Select(product =>
                         new InlineQueryResultArticle(product.Title.GetHashCode().ToString(), product.Title,
-                            new InputTextMessageContent($"{product.ProductId}")) { ThumbUrl = product.Image })
+                            new InputTextMessageContent($"{product.Id}")) { ThumbUrl = product.Image })
                     .Cast<InlineQueryResult>().ToList();
 
                 if (results is null)

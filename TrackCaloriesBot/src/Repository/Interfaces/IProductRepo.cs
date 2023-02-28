@@ -15,6 +15,6 @@ public interface IProductRepo
     public Task AddFat(string? message, long? id);
     public Task AddCarbs(string? message, long? id);
     public Task AddQuantity(string message, long? id);
-    public Task AddProductInfoFromResponse(ResponseProduct responseProduct, long? id);
+    public Task AddProductInfoFromResponse(ResponseItem responseProduct, long? id);
     public Task DeleteProduct(long? id);
 }

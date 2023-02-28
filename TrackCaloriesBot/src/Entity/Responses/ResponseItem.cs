@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 namespace TrackCaloriesBot.Entity;
 
 [Serializable]
-public class ResponseProduct
+public class ResponseItem
 {
     [JsonProperty("id")]
-    public int ProductId { get; set; }
+    public int Id { get; set; }
     [JsonProperty("name")]
     public string Title { get; set; }
     [JsonProperty("image")]

@@ -179,7 +179,7 @@ public class ProductRepo : IProductRepo
         }
     }
 
-    public async Task AddProductInfoFromResponse(ResponseProduct responseProduct, long? id)
+    public async Task AddProductInfoFromResponse(ResponseItem responseProduct, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
