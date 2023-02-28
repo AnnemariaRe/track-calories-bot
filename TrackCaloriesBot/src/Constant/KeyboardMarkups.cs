@@ -6,8 +6,9 @@ public static class KeyboardMarkups
 {
     public static ReplyKeyboardMarkup MenuKeyboardMarkup = new(new[]
     {
-        new KeyboardButton[] { "New record", "Summary for today" },
+        new KeyboardButton[] { "New record", "Recipes" },
         new KeyboardButton[] { "My progress", "Info about me" },
+        new KeyboardButton[] { "Summary for today" }
     }){
         ResizeKeyboard = true
     };
@@ -25,6 +26,21 @@ public static class KeyboardMarkups
         new KeyboardButton[] { "Search products", "Enter manually" },
         new KeyboardButton[] { "Scan a barcode", "Get from your favourites" },
         new KeyboardButton[] { "Back" }
+    }){
+        ResizeKeyboard = true
+    };
+    public static ReplyKeyboardMarkup RecipesKeyboardMarkup = new(new[]
+    {
+        new KeyboardButton[] { "Search new recipes", "Create your own recipe" },
+        new KeyboardButton[] { "Show my recipes" },
+    }){
+        ResizeKeyboard = true
+    };
+    public static ReplyKeyboardMarkup AfterRecipeInfoKeyboardMarkup = new(new[]
+    {
+        new KeyboardButton[] { "Save to your favourites" },
+        new KeyboardButton[] { "Get another recipe with same properties" },
+        new KeyboardButton[] { "Get another recipe with new properties" },
     }){
         ResizeKeyboard = true
     };

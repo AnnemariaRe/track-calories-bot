@@ -54,6 +54,7 @@ public class Startup
         services.AddSingleton<ICommand, EnterManuallyCommand>();
         services.AddSingleton<ICommand, SearchProductCommand>();
         services.AddSingleton<ICommand, SearchInlineQueryCommand>();
+        services.AddSingleton<ICommand, RecipesMenuCommand>();
         
         var culture = new CultureInfo("en-US");
         CultureInfo.DefaultThreadCurrentCulture = culture;

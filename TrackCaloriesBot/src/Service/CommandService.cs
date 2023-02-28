@@ -67,6 +67,9 @@ public class CommandService : ICommandService
             case Commands.NewRecordCommand:
                 await ExecuteCommand(Commands.NewRecordCommand, id, update, client);
                 return;
+            case Commands.RecipesCommand:
+                await ExecuteCommand(Commands.RecipesCommand, id, update, client);
+                return;
             case Commands.AddWaterCommand:
                 await ExecuteCommand(Commands.AddWaterCommand, id, update, client);
                 return;
