@@ -15,6 +15,7 @@ public static class Commands
     public const string ProgressCommand = "My progress";
     public const string AddWaterCommand = "Water";
     public const string RecipesCommand = "Recipes";
+    public const string SearchRecipesCommand = "Search new recipes";
     public const string BackCommand = "Back";
     public const string DefaultBackCommand = "/back";
 }

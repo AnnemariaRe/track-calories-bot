@@ -43,6 +43,8 @@ public class Startup
         services.AddSingleton<IConversationDataRepo, ConversationDataRepo>();
         services.AddSingleton<ISpoonacularRepo, SpoonacularRepo>();
         services.AddSingleton<ICommandRepo, CommandRepo>();
+        services.AddSingleton<IRequestRepo, RequestRepo>();
+        services.AddSingleton<IRecipeRepo, RecipeRepo>();
         services.AddSingleton<ICommand, StartCommand>();
         services.AddSingleton<ICommand, RegisterCommand>();
         services.AddSingleton<ICommand, ShowUserInfoCommand>();
@@ -55,6 +57,7 @@ public class Startup
         services.AddSingleton<ICommand, SearchProductCommand>();
         services.AddSingleton<ICommand, SearchInlineQueryCommand>();
         services.AddSingleton<ICommand, RecipesMenuCommand>();
+        services.AddSingleton<ICommand, SearchRecipesCommand>();
         
         var culture = new CultureInfo("en-US");
         CultureInfo.DefaultThreadCurrentCulture = culture;

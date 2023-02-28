@@ -64,13 +64,13 @@ public class SpoonacularRepo : ISpoonacularRepo
         return product;
     }
 
-    public async Task<IEnumerable<ResponseItem>> GetRecipes(RequestRecipe request, string query)
+    public async Task<IEnumerable<ResponseItem>> GetRecipes(RequestRecipe? request, string query)
     {
         var recipes = new List<ResponseItem>();
         
         var url = "https://api.spoonacular.com/recipes/complexSearch?";
         var parameters =
-            $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&equipment={request.Equipments}&includeIngredients={request.Ingredients}&maxReadyTime={request.MaxReadyTime}&number=10";
+            $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&equipment={request?.Equipments}&includeIngredients={request?.Ingredients}&maxReadyTime={request?.MaxReadyTime}&number=10";
 
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);

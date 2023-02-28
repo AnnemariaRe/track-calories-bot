@@ -8,10 +8,6 @@ public static class InlineKeyboards
     { 
         new[] { InlineKeyboardButton.WithCallbackData("Register", "/register") },
     });
-    public static InlineKeyboardMarkup UpdateInlineKeyboard = new InlineKeyboardMarkup(new[]
-    {
-        new[] { InlineKeyboardButton.WithCallbackData("Show user info", "/show") },
-    });
     public static InlineKeyboardMarkup ServingTypeInlineKeyboard = new InlineKeyboardMarkup(new[]
     {
         new[]
@@ -33,10 +29,19 @@ public static class InlineKeyboards
         InlineKeyboardButton.WithSwitchInlineQueryCurrentChat(
             text: "start searching...")
     });
+    public static InlineKeyboardMarkup SearchRecipeInlineKeyboard = new(new[]
+    {
+        InlineKeyboardButton.WithSwitchInlineQueryCurrentChat(
+            text: "start searching....")
+    });
     public static InlineKeyboardMarkup ProductInfoInlineKeyboard = new InlineKeyboardMarkup(new[]
     {
         new[] { InlineKeyboardButton.WithCallbackData("Continue", "/continue") },
         new[] { InlineKeyboardButton.WithCallbackData("Choose another one", "/search") }
+    });
+    public static InlineKeyboardMarkup SkipInlineKeyboard = new InlineKeyboardMarkup(new[]
+    {
+        new[] { InlineKeyboardButton.WithCallbackData("Skip", "/skip") },
     });
     
 }

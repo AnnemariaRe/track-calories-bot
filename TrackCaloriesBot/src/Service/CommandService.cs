@@ -33,7 +33,7 @@ public class CommandService : ICommandService
         
         switch (update)
         {
-            case { Type: UpdateType.InlineQuery, InlineQuery.Query.Length: > 3 and < 10 }:
+            case { Type: UpdateType.InlineQuery, InlineQuery.Query.Length: > 3 and < 15}:
                 await ExecuteCommand(Commands.InlineCommand, id, update, client);
                 return;
             case { Type: UpdateType.CallbackQuery }:
@@ -70,6 +70,9 @@ public class CommandService : ICommandService
             case Commands.RecipesCommand:
                 await ExecuteCommand(Commands.RecipesCommand, id, update, client);
                 return;
+            case Commands.SearchRecipesCommand:
+                await ExecuteCommand(Commands.SearchRecipesCommand, id, update, client);
+                return;
             case Commands.AddWaterCommand:
                 await ExecuteCommand(Commands.AddWaterCommand, id, update, client);
                 return;
@@ -105,6 +108,9 @@ public class CommandService : ICommandService
             case Commands.SearchProductsCommand:
                 await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
                 break;
+            case Commands.SearchRecipesCommand:
+                await ExecuteCommand(Commands.SearchRecipesCommand, id, update, client);
+                return;
         }
     }
 
