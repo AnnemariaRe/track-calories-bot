@@ -30,7 +30,7 @@ public class ConversationDataRepo : IConversationDataRepo
             UserId = update.Message.Chat.Id,
             CommandName = null,
             MealType = update.Message.Text,
-            ProductId = 0,
+            ItemId = 0,
             ConversationStage = 0
         };
         
@@ -80,7 +80,7 @@ public class ConversationDataRepo : IConversationDataRepo
         var conversation = GetAddProductConversation(update.Message.Chat.Id);
         if (conversation is not null)
         {
-            conversation.ProductId = id;
+            conversation.ItemId = id;
             var serialConversation = JsonConvert.SerializeObject(conversation);
             db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
         }

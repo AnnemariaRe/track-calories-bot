@@ -43,9 +43,9 @@ public class EnterManuallyCommand : ICommand
             }
 
             long? productId = 0;
-            if (conversation.ProductId != null)
+            if (conversation.ItemId != null)
             {
-                productId = conversation.ProductId;
+                productId = conversation.ItemId;
             }
 
             switch (conversation.ConversationStage)

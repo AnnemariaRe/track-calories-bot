@@ -61,7 +61,7 @@ public class SearchProductCommand : ICommand
             }
             
             long? productId = 0;
-            if (conversation.ProductId != null) productId = conversation.ProductId;
+            if (conversation.ItemId != null) productId = conversation.ItemId;
 
             switch (conversation.ConversationStage)
             {
@@ -84,7 +84,7 @@ public class SearchProductCommand : ICommand
                     }
                     if (text is "/search")
                     {
-                        var id1 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.ProductId;
+                        var id1 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.ItemId;
                         _productRepo.DeleteProduct(id1);
                         _conversationRepo.AddProductId(update, 0);
                         _conversationRepo.DecrementStage(message.Chat.Id);
@@ -123,7 +123,7 @@ public class SearchProductCommand : ICommand
                     break;
                 case 4:
                     _conversationRepo.IncrementStage(message.Chat.Id);
-                    var id2 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.ProductId;
+                    var id2 = _conversationRepo.GetAddProductConversation(message.Chat.Id)!.ItemId;
                     await _productRepo.AddServingAmount(text, id2);
                     
                     if (_productRepo.GetProduct(productId)!.Result!.ServingAmount < 0)
@@ -139,7 +139,7 @@ public class SearchProductCommand : ICommand
                     break;
                 case 5:
                     var result = _conversationRepo.GetAddProductConversation(message.Chat.Id)!;
-                    await _productRepo.AddQuantity(text, result.ProductId);
+                    await _productRepo.AddQuantity(text, result.ItemId);
                     
                     if (_productRepo.GetProduct(productId)!.Result!.Quantity < 0)
                     {
