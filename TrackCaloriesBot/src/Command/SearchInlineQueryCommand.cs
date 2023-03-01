@@ -43,23 +43,12 @@ public class SearchInlineQueryCommand : ICommand
             
             if (conversation is { CommandName: Commands.SearchRecipesCommand, ConversationStage: 4 })
             {
-                Task<IEnumerable<ResponseItem>> recipeResult;
-                try
-                {
- recipeResult= _spoonacularRepo.GetRecipes(_requestRepo.GetRequest(update.InlineQuery.From.Id),
-                    update.InlineQuery.Query);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-                
-                var results = recipeResult.Result
-                    .Select(recipe =>
-                        new InlineQueryResultArticle(recipe.Title.GetHashCode().ToString(),recipe.Title,
-                            new InputTextMessageContent($"{recipe.Id}")) { ThumbUrl = recipe.Image })
-                    .Cast<InlineQueryResult>().ToList();
+                var recipeResult = _spoonacularRepo.GetRecipes(_requestRepo.GetRequest(update.InlineQuery.From.Id), update.InlineQuery.Query);
+
+                var results = recipeResult.Result.Select(recipe => new InlineQueryResultArticle(
+                        recipe.Title.GetHashCode().ToString(), recipe.Title,
+                        new InputTextMessageContent($"{recipe.Id}")) { ThumbUrl = recipe.Image })
+                        .Cast<InlineQueryResult>().ToList();
 
                 await client.AnswerInlineQueryAsync(
                     update.InlineQuery.Id, results);

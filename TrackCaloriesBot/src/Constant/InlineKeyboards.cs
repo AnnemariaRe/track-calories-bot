@@ -1,3 +1,4 @@
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TrackCaloriesBot.Constant;
@@ -43,5 +44,5 @@ public static class InlineKeyboards
     {
         new[] { InlineKeyboardButton.WithCallbackData("Skip", "/skip") },
     });
-    
+
 }

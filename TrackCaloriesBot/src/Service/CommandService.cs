@@ -14,10 +14,12 @@ public class CommandService : ICommandService
 {
     private readonly List<ICommand> _commands;
     private readonly ICommandRepo _commandRepo;
+    private readonly IConversationDataRepo _conversationDataRepo;
 
-    public CommandService(IServiceProvider serviceProvider, ICommandRepo commandRepo)
+    public CommandService(IServiceProvider serviceProvider, ICommandRepo commandRepo, IConversationDataRepo conversationDataRepo)
     {
         _commandRepo = commandRepo;
+        _conversationDataRepo = conversationDataRepo;
         _commands = serviceProvider.GetServices<ICommand>().ToList();
     }
     
@@ -103,7 +105,16 @@ public class CommandService : ICommandService
                 }
                 break;
             case Commands.InlineCommand:
-                await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
+                if (_conversationDataRepo.GetConversationData(update.Message.Chat.Id).CommandName is Commands
+                        .SearchProductsCommand)
+                {
+                    await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
+                }
+                else if (_conversationDataRepo.GetConversationData(update.Message.Chat.Id)?.CommandName is Commands
+                             .SearchRecipesCommand)
+                {
+                    await ExecuteCommand(Commands.SearchRecipesCommand, id, update, client);
+                }
                 break;
             case Commands.SearchProductsCommand:
                 await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);

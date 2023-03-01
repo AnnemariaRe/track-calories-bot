@@ -92,7 +92,7 @@ public class SpoonacularRepo : ISpoonacularRepo
     public async Task<ResponseRecipe?> GetRecipeInfo(int id)
     {
         var url = "https://api.spoonacular.com/recipes/";
-        var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}";
+        var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}&includeNutrition=true";
         
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);
@@ -108,6 +108,11 @@ public class SpoonacularRepo : ISpoonacularRepo
             var data = JsonConvert.DeserializeObject<JObject>(jsonString);
             ingredient.WeightPerServing = data.SelectToken(
                 "nutrition.weightPerServing.amount").Value<int>();
+
+            if (!ingredient.SourceUrl.Contains("https"))
+            {
+                ingredient.SourceUrl = ingredient.SourceUrl.Replace("http", "https");
+            }
         }
 
         return ingredient;
