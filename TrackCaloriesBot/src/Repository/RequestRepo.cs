@@ -20,7 +20,7 @@ public class RequestRepo : IRequestRepo
     {
         var db = _redis.GetDatabase();
 
-        var request = db.StringGet(update.Message?.Chat.Id.ToString());
+        var request = db.StringGet(RequestIdPrefix + update.Message?.Chat.Id.ToString());
         if (!request.IsNullOrEmpty)
         {
             return JsonConvert.DeserializeObject<RequestRecipe>(request);

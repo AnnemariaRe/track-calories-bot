@@ -53,7 +53,7 @@ public class SearchProductCommand : ICommand
         else
         {
             var conversation = _conversationRepo.GetConversationData(message.Chat.Id)!;
-            if (conversation is null) _conversationRepo.CreateConversation(update);
+            if (conversation is null) conversation = _conversationRepo.CreateConversation(update);
             
             if (conversation?.CommandName is null)
             {

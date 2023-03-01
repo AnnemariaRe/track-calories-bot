@@ -9,8 +9,10 @@ public class ResponseItem
     [JsonProperty("id")]
     public int Id { get; set; }
     [JsonProperty("title")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string Title { get; set; }
     [JsonProperty("name")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string Name { get; set; }
     [JsonProperty("image")]
     public string Image { get; set; }

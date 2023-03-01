@@ -51,9 +51,8 @@ public class SearchRecipesCommand : ICommand
         }
         else
         {
-            var conversation = _conversationRepo.GetConversationData(message.Chat.Id)!;
-            if (conversation is null) _conversationRepo.CreateConversation(update);
-            
+            var conversation = _conversationRepo.GetConversationData(message.Chat.Id)! ?? _conversationRepo.CreateConversation(update);
+
             if (conversation?.CommandName is null)
             {
                 _conversationRepo.AddCommandName(update);
