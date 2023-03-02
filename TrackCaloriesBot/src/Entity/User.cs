@@ -22,4 +22,5 @@ public class User
     public ActivityLevel? ActivityLevel { get; set; }
     public int RegistrationStage { get; set; }
     public ICollection<DayTotalData?> DayTotalData { get; set; }
+    public ICollection<Recipe?> Recipes { get; set; }
 }

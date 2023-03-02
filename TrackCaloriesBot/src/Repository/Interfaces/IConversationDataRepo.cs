@@ -10,6 +10,6 @@ public interface IConversationDataRepo
     public void IncrementStage(long id);
     public void DecrementStage(long id);
     public void AddCommandName(Update update);
-    public void AddItemId(Update update, long id);
+    public void AddItemId(Update update, int id);
     public void DeleteConversation(ConversationData conversation);
 }

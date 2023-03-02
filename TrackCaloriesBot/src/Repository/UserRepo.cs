@@ -183,6 +183,16 @@ public class UserRepo : IUserRepo
         }
     }
 
+    public async Task AddRecipe(long id, Recipe? recipe)
+    {
+        var user = GetUser(id);
+        if (user?.Result is not null && recipe is not null)
+        {
+            user.Result.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public async Task<User?> GetUser(long id)
     {
         var user = await _context.Users.FirstOrDefaultAsync(x => x.TgId == id);

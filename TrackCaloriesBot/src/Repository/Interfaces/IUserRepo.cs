@@ -18,6 +18,7 @@ public interface IUserRepo
     public Task AddGoalWeight(Update update);
     public Task AddActivityLevel(Update update);
     public Task AddDayTotalData(DayTotalData? dayTotalData, Update update);
+    public Task AddRecipe(long id, Recipe? recipe);
 
 
 }

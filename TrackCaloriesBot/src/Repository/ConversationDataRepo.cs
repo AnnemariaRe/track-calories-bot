@@ -72,7 +72,7 @@ public class ConversationDataRepo : IConversationDataRepo
         }
     }
     
-    public void AddItemId(Update update, long id)
+    public void AddItemId(Update update, int id)
     {
         if (update.Message?.Text == null) return;
         

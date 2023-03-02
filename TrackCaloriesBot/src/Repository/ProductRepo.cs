@@ -100,8 +100,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(message, out var x);
-            if (check)
+            if (int.TryParse(message, out var x))
             {
                 product.Result.ServingAmount = x;
                 await _context.SaveChangesAsync();
@@ -114,8 +113,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(message, out var x);
-            if (check)
+            if (int.TryParse(message, out var x))
             {
                 product.Result.BaseCalories = x;
                 await _context.SaveChangesAsync();
@@ -128,8 +126,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(message, out var x);
-            if (check)
+            if (int.TryParse(message, out var x))
             {
                 product.Result.BaseProtein = x;
                 await _context.SaveChangesAsync();
@@ -142,8 +139,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(message, out var x);
-            if (check)
+            if (int.TryParse(message, out var x))
             {
                 product.Result.BaseFat = x;
                 await _context.SaveChangesAsync();
@@ -156,8 +152,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(message, out var x);
-            if (check)
+            if (int.TryParse(message, out var x))
             {
                 product.Result.BaseCarbs = x;
                 await _context.SaveChangesAsync();
@@ -170,8 +165,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            var check = int.TryParse(message, out var x);
-            if (check)
+            if (int.TryParse(message, out var x))
             {
                 product.Result.Quantity = x;
                 await _context.SaveChangesAsync();

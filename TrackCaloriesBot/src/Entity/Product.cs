@@ -14,9 +14,9 @@ public class Product
     public ServingType ServingType { get; set; }
     public int ServingAmount { get; set; }
     public int Quantity { get; set; }
-    public int BaseCalories { get; set; }
-    public int BaseProtein { get; set; }
-    public int BaseFat { get; set; }
-    public int BaseCarbs { get; set; }
+    public double BaseCalories { get; set; }
+    public double BaseProtein { get; set; }
+    public double BaseFat { get; set; }
+    public double BaseCarbs { get; set; }
     public MealData? MealData { get; set; }
 }
