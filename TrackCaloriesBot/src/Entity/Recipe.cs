@@ -15,9 +15,10 @@ public class Recipe
     public string? SourceUrl { get; set; }
     public int ServingsNumber { get; set; }
     public int ReadyInMinutes { get; set; }
-    public int BaseProtein { get; set; }
-    public int BaseFat { get; set; }
-    public int BaseCarbs { get; set; }
+    public double BaseCalories { get; set; }
+    public double BaseProtein { get; set; }
+    public double BaseFat { get; set; }
+    public double BaseCarbs { get; set; }
     public int WeightPerServing { get; set; }
-    public ICollection<Product> Products { get; set; }
+    public ICollection<Product>? Products { get; set; }
 }
