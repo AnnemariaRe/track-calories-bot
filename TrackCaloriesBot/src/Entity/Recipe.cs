@@ -9,9 +9,10 @@ public class Recipe
     }
 
     [Key] public int Id { get; set; }
+    public int? ApiId { get; set; }
     public string? Name { get; set; }
-    public string Image { get; set; }
-    public string SourceUrl { get; set; }
+    public string? Image { get; set; }
+    public string? SourceUrl { get; set; }
     public int ServingsNumber { get; set; }
     public int ReadyInMinutes { get; set; }
     public int BaseProtein { get; set; }

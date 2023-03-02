@@ -38,7 +38,7 @@ public class MealDataRepo : IMealDataRepo
 
         var newMealData = new MealData
         {
-            MealId = Guid.NewGuid(),
+            MealId = new Guid().GetHashCode(),
             MealType = type,
             DayTotalData = dayTotalData,
             Products = null

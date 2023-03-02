@@ -7,6 +7,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
     public DbSet<MealData> MealData { get; set; }
     public DbSet<DayTotalData> DayTotalData { get; set; }
 
