@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
@@ -29,7 +28,7 @@ public class RecipeRepo : IRecipeRepo
         
         var newRecipe = new Recipe()
         {
-            Id = new Guid().GetHashCode(),
+            Id = Guid.NewGuid().GetHashCode(),
             Name = update.Message?.Text,
             Image = null,
             SourceUrl = null,
@@ -168,7 +167,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task CreateRecipeFromResponse(ResponseRecipe response, long id)
+    public async Task CreateRecipeFromResponse(ResponseRecipe? response, long id)
     {
         if (response is null) throw new BotException("Recipe response cannot be null");
         
@@ -177,27 +176,29 @@ public class RecipeRepo : IRecipeRepo
         
         if (recipe != null) throw new BotException("Recipe entity already exists");
 
-        ICollection<Product>? ingredients = null;
+        ICollection<Product>? ingredients = new List<Product>();
         foreach (var ingredient in response.Ingredients)
         {
             ingredients?.Add(new Product
             {
-                Id = 0,
-                Name = ingredient.Name,
+                Id = Guid.NewGuid()
+                    .GetHashCode(),
+                Name = ingredient.OriginalName,
                 ServingType = ServingType.Grams,
                 ServingAmount = 0,
                 Quantity = 0,
-                BaseCalories = ingredient.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Calories")!.Amount,
-                BaseProtein = ingredient.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Protein")!.Amount,
-                BaseFat = ingredient.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Fat")!.Amount,
-                BaseCarbs = ingredient.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")!.Amount,
-                MealData = null
+                BaseCalories = 0,
+                BaseProtein = 0,
+                BaseFat = 0,
+                BaseCarbs = 0,
+                MealData = null,
             });
         }
         
         var newRecipe = new Recipe()
         {
-            Id = new Guid().GetHashCode(),
+            Id = Guid.NewGuid().GetHashCode(),
+            ApiId = response.Id,
             Name = response.Title,
             Image = response.Image,
             SourceUrl = response.SourceUrl,
@@ -211,8 +212,8 @@ public class RecipeRepo : IRecipeRepo
             Products = ingredients
         };
         
-        await _userRepo.AddRecipe(id, newRecipe);
         await _context.Recipes.AddAsync(newRecipe);
+        await _userRepo.AddRecipe(id, newRecipe);
         await _context.SaveChangesAsync();
     }
 

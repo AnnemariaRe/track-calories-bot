@@ -16,6 +16,6 @@ public interface IRecipeRepo
     public Task AddWeightPerServing(string? message, long? id);
     public Task AddProduct(Product? product, long? id);
     public Task AddProducts(ICollection<Product>? products, long? id);
-    public Task CreateRecipeFromResponse(ResponseRecipe response, long id);
+    public Task CreateRecipeFromResponse(ResponseRecipe? response, long id);
     public Task DeleteRecipe(long? id);
 }

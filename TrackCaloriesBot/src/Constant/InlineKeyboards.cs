@@ -33,7 +33,7 @@ public static class InlineKeyboards
     public static InlineKeyboardMarkup SearchRecipeInlineKeyboard = new(new[]
     {
         InlineKeyboardButton.WithSwitchInlineQueryCurrentChat(
-            text: "start searching....")
+            text: "start searching...")
     });
     public static InlineKeyboardMarkup ProductInfoInlineKeyboard = new InlineKeyboardMarkup(new[]
     {

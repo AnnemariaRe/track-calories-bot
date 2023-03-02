@@ -70,8 +70,21 @@ public class SpoonacularRepo : ISpoonacularRepo
         
         var url = "https://api.spoonacular.com/recipes/complexSearch?";
         var parameters =
-            $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&equipment={request?.Equipments}&includeIngredients={request?.Ingredients}&maxReadyTime={request?.MaxReadyTime}&number=10";
+            $"?apiKey={Keys.SPOONACULAR_API_KEY}&number=10";
 
+        if (request?.Equipments is not null)
+        {
+            parameters += $"&equipment={request?.Equipments}";
+        }
+        if (request?.Ingredients is not null)
+        {
+            parameters += $"&includeIngredients={request?.Ingredients}";
+        }
+        if (request?.MaxReadyTime is not null)
+        {
+            parameters += $"maxReadyTime={request?.MaxReadyTime}";
+        }
+        
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -100,21 +113,21 @@ public class SpoonacularRepo : ISpoonacularRepo
 
         var response = await client.GetAsync(parameters).ConfigureAwait(false);
 
-        var ingredient = new ResponseRecipe();
+        var recipe = new ResponseRecipe();
         if (response.IsSuccessStatusCode)
         {
             var jsonString = await response.Content.ReadAsStringAsync();
-            ingredient = JsonConvert.DeserializeObject<ResponseRecipe>(jsonString);
+            recipe = JsonConvert.DeserializeObject<ResponseRecipe>(jsonString);
             var data = JsonConvert.DeserializeObject<JObject>(jsonString);
-            ingredient.WeightPerServing = data.SelectToken(
+            recipe.WeightPerServing = data.SelectToken(
                 "nutrition.weightPerServing.amount").Value<int>();
 
-            if (!ingredient.SourceUrl.Contains("https"))
+            if (!recipe.SourceUrl.Contains("https"))
             {
-                ingredient.SourceUrl = ingredient.SourceUrl.Replace("http", "https");
+                recipe.SourceUrl = recipe.SourceUrl.Replace("http", "https");
             }
         }
 
-        return ingredient;
+        return recipe;
     }
 }

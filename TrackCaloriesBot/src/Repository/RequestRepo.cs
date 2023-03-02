@@ -20,12 +20,6 @@ public class RequestRepo : IRequestRepo
     {
         var db = _redis.GetDatabase();
 
-        var request = db.StringGet(RequestIdPrefix + update.Message?.Chat.Id.ToString());
-        if (!request.IsNullOrEmpty)
-        {
-            return JsonConvert.DeserializeObject<RequestRecipe>(request);
-        }
-        
         var newRequest = new RequestRecipe()
         {
             UserId = RequestIdPrefix + update.Message.Chat.Id,

@@ -44,10 +44,11 @@ public class ProductRepo : IProductRepo
 
         var newProduct = new Product()
         {
-            Id = new Guid().GetHashCode(),
+            Id = Guid.NewGuid().GetHashCode(),
             Name = update.Message?.Text,
             Quantity = 1,
             MealData = mealData,
+            BaseCalories = 0,
             BaseProtein = 0,
             BaseFat = 0,
             BaseCarbs = 0

@@ -38,6 +38,7 @@ public class UserRepo : IUserRepo
             Goal = null,
             ActivityLevel = null,
             RegistrationStage = 1,
+            Recipes = new List<Recipe?>()
         };
 
         var result = await _context.Users.AddAsync(newUser);

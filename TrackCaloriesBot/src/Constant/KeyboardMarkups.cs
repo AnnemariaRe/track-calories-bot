@@ -39,8 +39,8 @@ public static class KeyboardMarkups
     public static ReplyKeyboardMarkup AfterRecipeInfoKeyboardMarkup = new(new[]
     {
         new KeyboardButton[] { "Save to your favourites" },
-        new KeyboardButton[] { "Get another recipe with same properties" },
-        new KeyboardButton[] { "Get another recipe with new properties" },
+        new KeyboardButton[] { "Get another recipe with same properties", "Get another recipe with new properties" },
+        new KeyboardButton[] { "Back" },
     }){
         ResizeKeyboard = true
     };
@@ -61,5 +61,4 @@ public static class KeyboardMarkups
         new KeyboardButton[] { "High" },
         new KeyboardButton[] { "Very high" },
     });
-    
 }
