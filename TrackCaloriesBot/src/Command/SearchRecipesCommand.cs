@@ -17,12 +17,13 @@ public class SearchRecipesCommand : ICommand
     private readonly IRecipeRepo _recipeRepo;
 
     public SearchRecipesCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo,
-        ISpoonacularRepo spoonacularRepo, IRequestRepo requestRepo)
+        ISpoonacularRepo spoonacularRepo, IRequestRepo requestRepo, IRecipeRepo recipeRepo)
     {
         _userRepo = userRepo;
         _conversationRepo = conversationRepo;
         _spoonacularRepo = spoonacularRepo;
         _requestRepo = requestRepo;
+        _recipeRepo = recipeRepo;
     }
 
     public async Task Execute(Update? update, ITelegramBotClient client)
@@ -138,6 +139,33 @@ public class SearchRecipesCommand : ICommand
                             text: textMessage,
                             parseMode: ParseMode.Html,
                             replyMarkup: webAppInlineKeyboard);
+                        
+                        await client.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "What's next?",
+                            replyMarkup: KeyboardMarkups.AfterRecipeInfoKeyboardMarkup);
+                    }
+                    break;
+                case 5:
+                    if (text == "Save to your favourites")
+                    {
+                        var recipe = _spoonacularRepo.GetRecipeInfo(_conversationRepo.GetConversationData(message.Chat.Id)!.ItemId).Result;
+                        await _recipeRepo.CreateRecipeFromResponse(recipe, message.Chat.Id);
+                        
+                        await client.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Recipe is successfully saved!",
+                            replyMarkup: KeyboardMarkups.AfterRecipeInfoKeyboardMarkup);
+                    } else if (text == "Get another recipe with same properties")
+                    {
+                        _conversationRepo.DecrementStage(message.Chat.Id);
+                        _conversationRepo.DecrementStage(message.Chat.Id);
+                        goto case 3;
+                    } else if (text == "Get another recipe with new properties")
+                    {
+                        _conversationRepo.DeleteConversation(_conversationRepo.GetConversationData(message.Chat.Id)!);
+                        _conversationRepo.CreateConversation(update);
+                        goto case 0;
                     }
                     break;
 

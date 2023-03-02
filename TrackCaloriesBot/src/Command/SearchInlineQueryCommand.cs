@@ -33,7 +33,7 @@ public class SearchInlineQueryCommand : ICommand
                 var productsResult = _spoonacularRepo.GetProducts(update.InlineQuery.Query);
                 var results = productsResult.Result
                     .Select(product =>
-                        new InlineQueryResultArticle(product.Title.GetHashCode().ToString(), product.Title,
+                        new InlineQueryResultArticle(product.Name.GetHashCode().ToString(), product.Name,
                             new InputTextMessageContent($"{product.Id}")) { ThumbUrl = product.Image })
                     .Cast<InlineQueryResult>().ToList();
                 
