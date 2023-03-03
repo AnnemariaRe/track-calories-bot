@@ -71,17 +71,12 @@ public class ProductRepo : IProductRepo
         return product;
     }
 
-    public async Task AddServingUnit(string message, long? id)
+    public async Task AddServingUnit(string? message, long? id)
     {
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            product.Result.ServingType = message switch
-                {
-                    "Grams" => ServingType.Grams,
-                    "Milliliters" => ServingType.Milliliters,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
+            product.Result.ServingType = message;
             await _context.SaveChangesAsync();
         }
     }
@@ -101,7 +96,7 @@ public class ProductRepo : IProductRepo
         var product = GetProduct(id);
         if (product?.Result is not null)
         {
-            if (int.TryParse(message, out var x))
+            if (double.TryParse(message, out var x))
             {
                 product.Result.ServingAmount = x;
                 await _context.SaveChangesAsync();

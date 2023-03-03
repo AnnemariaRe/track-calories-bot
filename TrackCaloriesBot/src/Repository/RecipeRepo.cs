@@ -184,8 +184,8 @@ public class RecipeRepo : IRecipeRepo
                 Id = Guid.NewGuid()
                     .GetHashCode(),
                 Name = ingredient.OriginalName,
-                ServingType = ServingType.Grams,
-                ServingAmount = 0,
+                ServingType = ingredient.ServingType,
+                ServingAmount = ingredient.ServingAmount,
                 Quantity = 0,
                 BaseCalories = 0,
                 BaseProtein = 0,

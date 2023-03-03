@@ -11,8 +11,8 @@ public class Product
 
     [Key] public int Id { get; set; }
     public string? Name { get; set; }
-    public ServingType ServingType { get; set; }
-    public int ServingAmount { get; set; }
+    public string? ServingType { get; set; }
+    public double ServingAmount { get; set; }
     public int Quantity { get; set; }
     public double BaseCalories { get; set; }
     public double BaseProtein { get; set; }

@@ -22,4 +22,10 @@ public class ResponseItem
     [JsonProperty("original")]
     [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string OriginalName { get; set; }
+    [JsonProperty("amount")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double ServingAmount { get; set; }
+    [JsonProperty("unit")]
+    [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string ServingType { get; set; }
 }
