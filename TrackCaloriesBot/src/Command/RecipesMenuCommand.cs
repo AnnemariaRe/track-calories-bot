@@ -10,10 +10,12 @@ public class RecipesMenuCommand : ICommand
 {
     public string Key => Commands.RecipesCommand;
     private readonly IUserRepo _userRepo;
+    private readonly IConversationDataRepo _conversationRepo;
     
-    public RecipesMenuCommand(IUserRepo userRepo)
+    public RecipesMenuCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo)
     {
         _userRepo = userRepo;
+        _conversationRepo = conversationRepo;
     }
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
@@ -30,6 +32,8 @@ public class RecipesMenuCommand : ICommand
         }
         else
         {
+            _conversationRepo.CreateConversation(update);
+            
             await client.SendTextMessageAsync(
                 chatId: message.Chat.Id,
                 text: "Choose your action",

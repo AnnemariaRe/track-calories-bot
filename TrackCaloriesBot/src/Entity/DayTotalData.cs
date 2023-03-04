@@ -13,4 +13,5 @@ public class DayTotalData
     public ICollection<MealData>? MealData { get; set; }
     public float Water { get; set; }
     [Index(IsUnique=true)] public string Date { get; set; }
+    public long UserId { get; set; }
 }

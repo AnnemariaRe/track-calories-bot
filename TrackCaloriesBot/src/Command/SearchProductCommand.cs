@@ -85,7 +85,7 @@ public class SearchProductCommand : ICommand
                     if (text is "/search")
                     {
                         var id1 = _conversationRepo.GetConversationData(message.Chat.Id)!.ItemId;
-                        _productRepo.DeleteProduct(id1);
+                        await _productRepo.DeleteProduct(id1);
                         _conversationRepo.AddItemId(update, 0);
                         _conversationRepo.DecrementStage(message.Chat.Id);
                         goto case 0;

@@ -34,7 +34,8 @@ public class DayTotalDataRepo : IDayTotalDataRepo
             DayId = messageDate.GetHashCode(),
             MealData = new List<MealData>(),
             Water = 0,
-            Date = messageDate
+            Date = messageDate,
+            UserId = update.Message.Chat.Id
         };
 
         await _userRepo.AddDayTotalData(dayTotalData, update);
@@ -50,7 +51,7 @@ public class DayTotalDataRepo : IDayTotalDataRepo
         var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
         
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>
-                x.Date == messageDate);
+                x.Date == messageDate && x.UserId == update.Message.Chat.Id);
 
         return dayTotalData;
     }

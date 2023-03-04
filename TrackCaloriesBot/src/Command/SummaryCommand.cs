@@ -44,19 +44,19 @@ public class SummaryCommand : ICommand
     
     private string BeautifulOutput(User userData, Update update)
     {
-        var dayTotal = _dayTotalDataRepo.GetDayTotalData(update);
+        var dayTotal = _dayTotalDataRepo.GetDayTotalData(update)?.Result;
 
-        if (dayTotal?.Result is null) return "No information for today :(";
+        if (dayTotal is null) return "No information for today :(";
         
         var caloriesNeed = HarrisBenedictFormula(userData);
         var proteinNeed = Math.Round(0.25 * caloriesNeed / 4);
         var fatNeed = Math.Round(0.3 * caloriesNeed / 9);
         var carbsNeed = Math.Round(0.45 * caloriesNeed / 4);
         
-        var breakfastData = _dayTotalDataRepo.GetMealData(MealType.Breakfast, dayTotal.Result);
-        var lunchData = _dayTotalDataRepo.GetMealData(MealType.Lunch, dayTotal.Result);
-        var dinnerData = _dayTotalDataRepo.GetMealData(MealType.Dinner, dayTotal.Result);
-        var snackData = _dayTotalDataRepo.GetMealData(MealType.Snack, dayTotal.Result);
+        var breakfastData = _dayTotalDataRepo.GetMealData(MealType.Breakfast, dayTotal);
+        var lunchData = _dayTotalDataRepo.GetMealData(MealType.Lunch, dayTotal);
+        var dinnerData = _dayTotalDataRepo.GetMealData(MealType.Dinner, dayTotal);
+        var snackData = _dayTotalDataRepo.GetMealData(MealType.Snack, dayTotal);
         
         var mealDataCalories = new double[4];
         var mealDataProtein = new double[4];
@@ -115,7 +115,7 @@ public class SummaryCommand : ICommand
         var proteinAte = mealDataProtein.Sum();
         var fatAte = mealDataFat.Sum();
         var carbsAte = mealDataCarbs.Sum();
-        var waterDrank = dayTotal.Result.Water;
+        var waterDrank = dayTotal.Water;
 
         return @"--------------- <b>EATEN \ LEFT</b> -----------------" + "\n" + "<pre>Calories:  " +
                @$"{caloriesAte:0} \ {Math.Max(0, caloriesNeed - caloriesAte):0} kcal" + "\n" + "Protein:   " +

@@ -3,7 +3,6 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
-using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Repository.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 
@@ -38,7 +37,8 @@ public class UserRepo : IUserRepo
             Goal = null,
             ActivityLevel = null,
             RegistrationStage = 1,
-            Recipes = new List<Recipe>()
+            Recipes = new List<Recipe>(),
+            DayTotalData = new List<DayTotalData?>()
         };
 
         var result = await _context.Users.AddAsync(newUser);
@@ -183,22 +183,20 @@ public class UserRepo : IUserRepo
             await _context.SaveChangesAsync();
         }
     }
+    
+    // public DayTotalData? GetDayTotalData(Update update)
+    // {
+    //     var user = GetUser(update.Message.Chat.Id);
+    //     var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
+    //     return user.Result?.DayTotalData.FirstOrDefault(x => x.Date == messageDate);
+    // }
 
     public async Task AddRecipe(long id, Recipe? recipe)
     {
         var user = GetUser(id);
-        if (user?.Result is not null && recipe is not null)
+        if (user.Result is not null && recipe is not null)
         {
-            try
-            {
-                user.Result.Recipes.Add(recipe);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
+            user.Result.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
         }
     }
