@@ -24,21 +24,22 @@ public static class KeyboardMarkups
     public static ReplyKeyboardMarkup MealKeyboardMarkup = new(new[]
     {
         new KeyboardButton[] { "Search products", "Enter manually" },
-        new KeyboardButton[] { "Scan a barcode", "Get from your favourites" },
+        new KeyboardButton[] { "Get from my saved ones" },
         new KeyboardButton[] { "Back" }
     }){
         ResizeKeyboard = true
     };
     public static ReplyKeyboardMarkup RecipesKeyboardMarkup = new(new[]
     {
-        new KeyboardButton[] { "Search new recipes", "Create your own recipe" },
+        new KeyboardButton[] { "Search new recipes", "Create my own recipe" },
         new KeyboardButton[] { "Show my recipes" },
+        new KeyboardButton[] { "Back" },
     }){
         ResizeKeyboard = true
     };
     public static ReplyKeyboardMarkup AfterRecipeInfoKeyboardMarkup = new(new[]
     {
-        new KeyboardButton[] { "Save to your favourites" },
+        new KeyboardButton[] { "Save to my favourites" },
         new KeyboardButton[] { "Get another recipe with same properties", "Get another recipe with new properties" },
         new KeyboardButton[] { "Back" },
     }){
@@ -60,5 +61,9 @@ public static class KeyboardMarkups
         new KeyboardButton[] { "Moderate" },
         new KeyboardButton[] { "High" },
         new KeyboardButton[] { "Very high" },
+    });
+    public static ReplyKeyboardMarkup GreatKeyboardMarkup = new(new[]
+    {
+        new KeyboardButton[] { "Great!" },
     });
 }
