@@ -38,7 +38,7 @@ public class UserRepo : IUserRepo
             Goal = null,
             ActivityLevel = null,
             RegistrationStage = 1,
-            Recipes = new List<Recipe?>()
+            Recipes = new List<Recipe>()
         };
 
         var result = await _context.Users.AddAsync(newUser);
@@ -189,7 +189,16 @@ public class UserRepo : IUserRepo
         var user = GetUser(id);
         if (user?.Result is not null && recipe is not null)
         {
-            user.Result.Recipes.Add(recipe);
+            try
+            {
+                user.Result.Recipes.Add(recipe);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
             await _context.SaveChangesAsync();
         }
     }

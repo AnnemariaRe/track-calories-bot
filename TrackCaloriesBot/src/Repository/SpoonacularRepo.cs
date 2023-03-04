@@ -15,7 +15,7 @@ public class SpoonacularRepo : ISpoonacularRepo
         var products = new List<ResponseItem>();
         
         var url = "https://api.spoonacular.com/food/ingredients/search";
-        var parameters = $"?apiKey={Keys.SPOONACULAR_API_KEY}&query={query}&number=15";
+        var parameters = $"?apiKey={Keys.SpoonacularApiKey}&query={query}&number=15";
 
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);
@@ -46,7 +46,7 @@ public class SpoonacularRepo : ISpoonacularRepo
     public async Task<ResponseItem?> GetProductInfo(int id)
     {
         var url = "https://api.spoonacular.com/food/ingredients/";
-        var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}&amount=100&unit=g";
+        var parameters = $"{id}/information?apiKey={Keys.SpoonacularApiKey}&amount=100&unit=g";
         
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);
@@ -70,19 +70,19 @@ public class SpoonacularRepo : ISpoonacularRepo
         
         var url = "https://api.spoonacular.com/recipes/complexSearch?";
         var parameters =
-            $"?apiKey={Keys.SPOONACULAR_API_KEY}&number=10";
+            $"?apiKey={Keys.SpoonacularApiKey}&number=10&query={query}";
 
         if (request?.Equipments is not null)
         {
-            parameters += $"&equipment={request?.Equipments}";
+            parameters += $"&equipment={request.Equipments}";
         }
         if (request?.Ingredients is not null)
         {
-            parameters += $"&includeIngredients={request?.Ingredients}";
+            parameters += $"&includeIngredients={request.Ingredients}";
         }
         if (request?.MaxReadyTime is not null)
         {
-            parameters += $"maxReadyTime={request?.MaxReadyTime}";
+            parameters += $"&maxReadyTime={request.MaxReadyTime}";
         }
         
         var client = new HttpClient();
@@ -105,7 +105,7 @@ public class SpoonacularRepo : ISpoonacularRepo
     public async Task<ResponseRecipe?> GetRecipeInfo(int id)
     {
         var url = "https://api.spoonacular.com/recipes/";
-        var parameters = $"{id}/information?apiKey={Keys.SPOONACULAR_API_KEY}&includeNutrition=true";
+        var parameters = $"{id}/information?apiKey={Keys.SpoonacularApiKey}&includeNutrition=true";
         
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);

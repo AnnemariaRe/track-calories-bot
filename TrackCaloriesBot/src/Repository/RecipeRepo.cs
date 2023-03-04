@@ -38,6 +38,7 @@ public class RecipeRepo : IRecipeRepo
             BaseProtein = 0,
             BaseFat = 0,
             BaseCarbs = 0,
+            Products = new List<Product>()
         };
 
         await _userRepo.AddRecipe(update.Message.Chat.Id, newRecipe);
@@ -181,8 +182,7 @@ public class RecipeRepo : IRecipeRepo
         {
             ingredients?.Add(new Product
             {
-                Id = Guid.NewGuid()
-                    .GetHashCode(),
+                Id = Guid.NewGuid().GetHashCode(),
                 Name = ingredient.OriginalName,
                 ServingType = ingredient.ServingType,
                 ServingAmount = ingredient.ServingAmount,
@@ -211,6 +211,7 @@ public class RecipeRepo : IRecipeRepo
             BaseCarbs = response.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")!.Amount,
             Products = ingredients
         };
+        
         
         await _context.Recipes.AddAsync(newRecipe);
         await _userRepo.AddRecipe(id, newRecipe);
