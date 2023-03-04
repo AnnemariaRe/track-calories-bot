@@ -87,6 +87,9 @@ public class CommandService : ICommandService
             case Commands.SearchProductsCommand:
                 await ExecuteCommand(Commands.SearchProductsCommand, id, update, client);
                 return;
+            case Commands.CreateRecipeCommand:
+                await ExecuteCommand(Commands.CreateRecipeCommand, id, update, client);
+                return;
             case "Breakfast" or "Lunch" or "Dinner" or "Snack":
                 await ExecuteCommand(Commands.AddProductToMealCommand, id, update, client);
                 return;
@@ -121,6 +124,9 @@ public class CommandService : ICommandService
                 break;
             case Commands.SearchRecipesCommand:
                 await ExecuteCommand(Commands.SearchRecipesCommand, id, update, client);
+                return;
+            case Commands.CreateRecipeCommand:
+                await ExecuteCommand(Commands.CreateRecipeCommand, id, update, client);
                 return;
         }
     }
