@@ -37,7 +37,7 @@ public class EnterManuallyCommand : ICommand
             var conversation = _conversationRepo.GetConversationData(message.Chat.Id)!;
             if (conversation is null) _conversationRepo.CreateConversation(update);
             
-            if (conversation?.CommandName is null)
+            if (conversation?.CommandName is null && conversation?.CommandName is Commands.CreateRecipeCommand)
             {
                 _conversationRepo.AddCommandName(update);
             }
@@ -52,13 +52,18 @@ public class EnterManuallyCommand : ICommand
             {
                 case 0:
                     _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
+                    goto case 3;
+                case 3:
+                    _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Write product name",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
-                case 1:
+                case 4:
                     var product = await _productRepo.CreateProduct(update);
                     _conversationRepo.AddItemId(update, product.Id);
                     _conversationRepo.IncrementStage(message.Chat.Id);
@@ -68,7 +73,7 @@ public class EnterManuallyCommand : ICommand
                         text: "Choose serving unit",
                         replyMarkup: InlineKeyboards.ServingTypeInlineKeyboard);
                     break;
-                case 2:
+                case 5:
                     _productRepo.AddServingUnit(message.Text, productId);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
@@ -77,7 +82,7 @@ public class EnterManuallyCommand : ICommand
                         text: "Write serving amount",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
-                case 3:
+                case 6:
                     await _productRepo.AddServingAmount(message.Text, productId);
                     if (_productRepo.GetProduct(productId)!.Result.ServingAmount < 0)
                     {
@@ -91,7 +96,7 @@ public class EnterManuallyCommand : ICommand
                         text: "Write calorie amount per 100 grams",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
-                case 4:
+                case 7:
                     await _productRepo.AddCalorieAmount(message.Text, productId);
                     if (_productRepo.GetProduct(productId)!.Result.BaseCalories < 0)
                     {
@@ -105,7 +110,7 @@ public class EnterManuallyCommand : ICommand
                         text: "Do you want to add PFC info?",
                         replyMarkup: InlineKeyboards.YesOrNoInlineKeyboard);
                     break;
-                case 5:
+                case 8:
                     if (update.CallbackQuery?.Data is "yes")
                     {
                         _conversationRepo.IncrementStage(message.Chat.Id);
@@ -121,10 +126,10 @@ public class EnterManuallyCommand : ICommand
                         {
                             _conversationRepo.IncrementStage(message.Chat.Id);
                         }
-                        goto case 9;
+                        goto case 12;
                     }
                     break;
-                case 6:
+                case 9:
                     await _productRepo.AddProtein(message.Text, productId);
                     if (_productRepo.GetProduct(productId)!.Result.BaseProtein < 0)
                     {
@@ -138,7 +143,7 @@ public class EnterManuallyCommand : ICommand
                         text: "Write fat amount (per 100 grams)",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
-                case 7:
+                case 10:
                     await _productRepo.AddFat(message.Text, productId);
                     if (_productRepo.GetProduct(productId)!.Result.BaseFat < 0)
                     {
@@ -152,7 +157,7 @@ public class EnterManuallyCommand : ICommand
                         text: "Write carbs amount (per 100 grams)",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
-                case 8:
+                case 11:
                     await _productRepo.AddCarbs(message.Text, productId);
                     if (_productRepo.GetProduct(productId)!.Result.BaseCarbs < 0)
                     {
@@ -161,8 +166,8 @@ public class EnterManuallyCommand : ICommand
                     }
                     _conversationRepo.IncrementStage(message.Chat.Id);
 
-                    goto case 9;
-                case 9:
+                    goto case 12;
+                case 12:
                     _conversationRepo.IncrementStage(message.Chat.Id);
                                         
                     await client.SendTextMessageAsync(
@@ -170,14 +175,21 @@ public class EnterManuallyCommand : ICommand
                         text: "Write quantity (by default: 1)",
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
-                case 10:
+                case 13:
                     await _productRepo.AddQuantity(message.Text, productId);
                     if (_productRepo.GetProduct(productId)!.Result.Quantity < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
                     }
-                    _conversationRepo.DeleteConversation(conversation);
+                    
+                    if (conversation.CommandName is Commands.AddIngredientCommand)
+                    {
+                        conversation.CommandName = Commands.CreateRecipeCommand;
+                    } else if (conversation.CommandName is Commands.EnterManuallyCommand)
+                    {
+                        _conversationRepo.DeleteConversation(conversation);
+                    }
                     
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,

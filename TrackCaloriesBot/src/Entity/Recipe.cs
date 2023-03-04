@@ -21,4 +21,5 @@ public class Recipe
     public double BaseCarbs { get; set; }
     public int WeightPerServing { get; set; }
     public ICollection<Product>? Products { get; set; }
+    public string? Description { get; set; }
 }

@@ -19,14 +19,14 @@ public static class InlineKeyboards
     });
     public static InlineKeyboardMarkup AddIngredientInlineKeyboard = new InlineKeyboardMarkup(new[]
     {
-        new[] { InlineKeyboardButton.WithCallbackData("Add ingredient", "/add_ingredient") },
+        new[] { InlineKeyboardButton.WithCallbackData("Add ingredient", "Add ingredient") },
     });
     public static InlineKeyboardMarkup AddIngredientFinishInlineKeyboard = new InlineKeyboardMarkup(new[]
     {
         new[]
         {
-            InlineKeyboardButton.WithCallbackData("Add ingredient", "/add_ingredient"),
-            InlineKeyboardButton.WithCallbackData("Finish", "/finish")
+            InlineKeyboardButton.WithCallbackData("Add ingredient", "Add ingredient"),
+            InlineKeyboardButton.WithCallbackData("Finish", "Finish")
         },
     });
     public static InlineKeyboardMarkup YesOrNoInlineKeyboard = new InlineKeyboardMarkup(new[]

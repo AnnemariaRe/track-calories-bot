@@ -55,8 +55,8 @@ public class CreateRecipeCommand : ICommand
             
             if (conversation?.CommandName is null) _conversationRepo.AddCommandName(update);
 
-            long? productId = 0;
-            if (conversation?.ItemId != null) productId = conversation.ItemId;
+            var recipeId = 0;
+            if (conversation?.RecipeId != null) recipeId = conversation.RecipeId;
 
             switch (conversation.ConversationStage)
             {
@@ -69,9 +69,23 @@ public class CreateRecipeCommand : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 1:
+                    var recipe = await _recipeRepo.CreateRecipe(update);
+                    _conversationRepo.AddRecipeId(update, recipe.Id); 
+                    _conversationRepo.IncrementStage(message.Chat.Id);
+
+                    await client.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: "How many servings it has?",
+                        replyMarkup: new ReplyKeyboardRemove());
                     break;
                 case 2:
-                    
+                    await _recipeRepo.AddServingsNumber(text, recipeId);
+                    _conversationRepo.IncrementStage(message.Chat.Id);
+
+                    await client.SendTextMessageAsync(
+                        chatId: message.Chat.Id,
+                        text: "Write included ingredients",
+                        replyMarkup: InlineKeyboards.AddIngredientInlineKeyboard);
                     break;
                 case 3:
                     

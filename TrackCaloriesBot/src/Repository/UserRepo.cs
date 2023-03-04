@@ -183,20 +183,13 @@ public class UserRepo : IUserRepo
             await _context.SaveChangesAsync();
         }
     }
-    
-    // public DayTotalData? GetDayTotalData(Update update)
-    // {
-    //     var user = GetUser(update.Message.Chat.Id);
-    //     var messageDate = update.Message.Date.ToString("dd.MM.yyyy");
-    //     return user.Result?.DayTotalData.FirstOrDefault(x => x.Date == messageDate);
-    // }
 
     public async Task AddRecipe(long id, Recipe? recipe)
     {
         var user = GetUser(id);
         if (user.Result is not null && recipe is not null)
         {
-            user.Result.Recipes.Add(recipe);
+            user.Result.Recipes?.Add(recipe);
             await _context.SaveChangesAsync();
         }
     }

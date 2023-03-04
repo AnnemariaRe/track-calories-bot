@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
-using TrackCaloriesBot.Enums;
 using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Repository.Interfaces;
 
@@ -19,10 +18,10 @@ public class RecipeRepo : IRecipeRepo
         _userRepo = userRepo;
     }
 
-    public async Task<Recipe> CreateRecipe(Update update, long id)
+    public async Task<Recipe> CreateRecipe(Update update)
     {
         var recipe = await _context.Recipes.FirstOrDefaultAsync(
-            x => update.Message != null && x.Name == update.Message.Text && x.Id == id);
+            x => update.Message != null && x.Name == update.Message.Text && x.Id == update.Message.Chat.Id);
         
         if (recipe != null) return recipe;
         
@@ -38,7 +37,8 @@ public class RecipeRepo : IRecipeRepo
             BaseProtein = 0,
             BaseFat = 0,
             BaseCarbs = 0,
-            Products = new List<Product>()
+            Products = new List<Product>(),
+            Description = null
         };
 
         await _userRepo.AddRecipe(update.Message.Chat.Id, newRecipe);
@@ -58,7 +58,7 @@ public class RecipeRepo : IRecipeRepo
         return recipe;
     }
 
-    public async Task AddServingsNumber(string message, long? id)
+    public async Task AddServingsNumber(string? message, long? id)
     {
         var recipe = GetRecipe(id);
         if (recipe?.Result is not null)
@@ -167,6 +167,16 @@ public class RecipeRepo : IRecipeRepo
             }
         }
     }
+    
+    public async Task AddDescription(string? message, long? id)
+    {
+        var recipe = GetRecipe(id);
+        if (recipe?.Result is not null)
+        {
+            recipe.Result.Description = message;
+            await _context.SaveChangesAsync();
+        }
+    }
 
     public async Task CreateRecipeFromResponse(ResponseRecipe? response, long id)
     {
@@ -209,12 +219,13 @@ public class RecipeRepo : IRecipeRepo
             BaseProtein = response.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Protein")!.Amount,
             BaseFat = response.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Fat")!.Amount,
             BaseCarbs = response.Nutrition.Nutrients.FirstOrDefault(x => x.Name == "Carbohydrates")!.Amount,
-            Products = ingredients
+            Products = ingredients,
+            Description = null
         };
         
         
-        await _context.Recipes.AddAsync(newRecipe);
         await _userRepo.AddRecipe(id, newRecipe);
+        await _context.Recipes.AddAsync(newRecipe);
         await _context.SaveChangesAsync();
     }
 

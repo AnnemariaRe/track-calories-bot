@@ -147,7 +147,7 @@ public class SearchRecipesCommand : ICommand
                     }
                     break;
                 case 5:
-                    if (text == "Save to your favourites")
+                    if (text == "Save to my favourites")
                     {
                         var recipe = _spoonacularRepo.GetRecipeInfo(_conversationRepo.GetConversationData(message.Chat.Id)!.ItemId).Result;
                         await _recipeRepo.CreateRecipeFromResponse(recipe, message.Chat.Id);

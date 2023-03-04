@@ -40,11 +40,17 @@ public class CommandService : ICommandService
                 return;
             case { Type: UpdateType.CallbackQuery }:
             {
-                if (update.CallbackQuery?.Data != null && update.CallbackQuery.Data.Contains(Commands.RegisterCommand))
+                if (update.CallbackQuery?.Data != null)
                 {
-                    await ExecuteCommand(Commands.RegisterCommand, id, update, client);
+                    if (update.CallbackQuery.Data.Contains(Commands.RegisterCommand))
+                    {
+                        await ExecuteCommand(Commands.RegisterCommand, id, update, client);
+                    }
+                    if (update.CallbackQuery.Data.Contains(Commands.AddIngredientCommand))
+                    {
+                        await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
+                    }
                 }
-
                 break;
             }
         }
@@ -102,10 +108,12 @@ public class CommandService : ICommandService
                 await ExecuteCommand(Commands.RegisterCommand, id, update, client);
                 break;
             case Commands.EnterManuallyCommand:
-                if (messageText != Commands.EnterManuallyCommand || callbackQuery.Data != Commands.EnterManuallyCommand)
+                if (_conversationDataRepo.GetConversationData(update.Message.Chat.Id).CommandName is Commands
+                        .AddIngredientCommand)
                 {
-                    await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
+                    await ExecuteCommand(Commands.CreateRecipeCommand, id, update, client);
                 }
+                await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
                 break;
             case Commands.InlineCommand:
                 if (_conversationDataRepo.GetConversationData(update.Message.Chat.Id).CommandName is Commands

@@ -11,5 +11,6 @@ public interface IConversationDataRepo
     public void DecrementStage(long id);
     public void AddCommandName(Update update);
     public void AddItemId(Update update, int id);
+    public void AddRecipeId(Update update, int id);
     public void DeleteConversation(ConversationData conversation);
 }
