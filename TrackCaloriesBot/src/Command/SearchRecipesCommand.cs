@@ -3,6 +3,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TrackCaloriesBot.Constant;
+using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Repository.Interfaces;
 
 namespace TrackCaloriesBot.Command;
@@ -150,7 +151,17 @@ public class SearchRecipesCommand : ICommand
                     if (text == "Save to my favourites")
                     {
                         var recipe = _spoonacularRepo.GetRecipeInfo(_conversationRepo.GetConversationData(message.Chat.Id)!.ItemId).Result;
-                        await _recipeRepo.CreateRecipeFromResponse(recipe, message.Chat.Id);
+                        try
+                        {
+                            await _recipeRepo.CreateRecipeFromResponse(recipe, message.Chat.Id);
+                        }
+                        catch (BotException e)
+                        {
+                            await client.SendTextMessageAsync(
+                                chatId: message.Chat.Id,
+                                text: "Recipe already exists in your favourites");
+                            return;
+                        }
                         
                         await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,

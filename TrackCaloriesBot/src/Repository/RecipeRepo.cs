@@ -40,9 +40,9 @@ public class RecipeRepo : IRecipeRepo
             Products = new List<Product>(),
             Description = null
         };
-
-        await _userRepo.AddRecipe(update.Message.Chat.Id, newRecipe);
+        
         var result = await _context.Recipes.AddAsync(newRecipe);
+        await _userRepo.AddRecipe(update.Message.Chat.Id, newRecipe);
         await _context.SaveChangesAsync();
 
         return result.Entity;
@@ -180,7 +180,7 @@ public class RecipeRepo : IRecipeRepo
 
     public async Task CreateRecipeFromResponse(ResponseRecipe? response, long id)
     {
-        if (response is null) throw new BotException("Recipe response cannot be null");
+        if (response is null) throw new NullBotException("Recipe response cannot be null");
         
         var recipe = await _context.Recipes.FirstOrDefaultAsync(
             x => x.Name == response.Title && x.ApiId == response.Id);
@@ -223,9 +223,9 @@ public class RecipeRepo : IRecipeRepo
             Description = null
         };
         
-        
-        await _userRepo.AddRecipe(id, newRecipe);
         await _context.Recipes.AddAsync(newRecipe);
+        await _userRepo.AddRecipe(id, newRecipe);
+        
         await _context.SaveChangesAsync();
     }
 

@@ -186,10 +186,11 @@ public class UserRepo : IUserRepo
 
     public async Task AddRecipe(long id, Recipe? recipe)
     {
-        var user = GetUser(id);
-        if (user.Result is not null && recipe is not null)
+        var user = GetUser(id).Result;
+        if (user is not null && recipe is not null)
         {
-            user.Result.Recipes?.Add(recipe);
+            user.Recipes ??= new List<Recipe>();
+            user.Recipes.Add(recipe);
             await _context.SaveChangesAsync();
         }
     }
