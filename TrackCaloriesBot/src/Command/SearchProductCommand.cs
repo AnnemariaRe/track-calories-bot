@@ -57,7 +57,7 @@ public class SearchProductCommand : ICommand
             
             if (conversation?.CommandName is null)
             {
-                _conversationRepo.AddCommandName(update);
+                _conversationRepo.AddCommandName(text, message.Chat.Id);
             }
             
             long? productId = 0;

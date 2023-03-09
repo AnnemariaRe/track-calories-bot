@@ -26,7 +26,7 @@ public static class InlineKeyboards
         new[]
         {
             InlineKeyboardButton.WithCallbackData("Add ingredient", "Add ingredient"),
-            InlineKeyboardButton.WithCallbackData("Finish", "Finish")
+            InlineKeyboardButton.WithCallbackData("Finish", "/finish")
         },
     });
     public static InlineKeyboardMarkup YesOrNoInlineKeyboard = new InlineKeyboardMarkup(new[]

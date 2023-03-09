@@ -61,7 +61,7 @@ public class SearchRecipesCommand : ICommand
 
             if (conversation?.CommandName is null)
             {
-                _conversationRepo.AddCommandName(update);
+                _conversationRepo.AddCommandName(text, message.Chat.Id);
             }
 
             long? recipeId = 0;

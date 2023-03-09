@@ -27,9 +27,9 @@ public class CommandService : ICommandService
     {
         var id = update.Type switch
         {
-            UpdateType.Message => update.Message?.Chat.Id,
-            UpdateType.CallbackQuery => update.CallbackQuery?.Message?.Chat.Id,
-            UpdateType.InlineQuery => update.InlineQuery?.From.Id,
+            UpdateType.Message => update.Message.Chat.Id,
+            UpdateType.CallbackQuery => update.CallbackQuery.Message.Chat.Id,
+            UpdateType.InlineQuery => update.InlineQuery.From.Id,
             _ => throw new ArgumentOutOfRangeException()
         };
         
@@ -45,10 +45,12 @@ public class CommandService : ICommandService
                     if (update.CallbackQuery.Data.Contains(Commands.RegisterCommand))
                     {
                         await ExecuteCommand(Commands.RegisterCommand, id, update, client);
+                        return;
                     }
                     if (update.CallbackQuery.Data.Contains(Commands.AddIngredientCommand))
                     {
                         await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
+                        return;
                     }
                 }
                 break;
@@ -108,10 +110,11 @@ public class CommandService : ICommandService
                 await ExecuteCommand(Commands.RegisterCommand, id, update, client);
                 break;
             case Commands.EnterManuallyCommand:
-                if (_conversationDataRepo.GetConversationData(update.Message.Chat.Id).CommandName is Commands
-                        .AddIngredientCommand)
+                if (_conversationDataRepo.GetConversationData(id).CommandName is Commands
+                        .CreateRecipeCommand)
                 {
                     await ExecuteCommand(Commands.CreateRecipeCommand, id, update, client);
+                    break;
                 }
                 await ExecuteCommand(Commands.EnterManuallyCommand, id, update, client);
                 break;

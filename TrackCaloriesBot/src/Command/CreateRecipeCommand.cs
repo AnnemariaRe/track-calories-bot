@@ -53,7 +53,7 @@ public class CreateRecipeCommand : ICommand
             var conversation = _conversationRepo.GetConversationData(message.Chat.Id)!;
             if (conversation is null) conversation = _conversationRepo.CreateConversation(update);
             
-            if (conversation?.CommandName is null) _conversationRepo.AddCommandName(update);
+            if (conversation?.CommandName is null) _conversationRepo.AddCommandName(text, message.Chat.Id);
 
             var recipeId = 0;
             if (conversation?.RecipeId != null) recipeId = conversation.RecipeId;

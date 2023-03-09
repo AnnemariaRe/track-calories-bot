@@ -101,17 +101,17 @@ public class ConversationDataRepo : IConversationDataRepo
         }
     }
 
-    public void AddCommandName(Update update)
+    public void AddCommandName(string? data, long id)
     {
-        if (update.Message?.Text == null) return;
+        if (data == null) return;
         
         var db = _redis.GetDatabase();
-        var conversation = GetConversationData(update.Message.Chat.Id);
+        var conversation = GetConversationData(id);
         if (conversation is not null)
         {
-            conversation.CommandName = update.Message.Text;
+            conversation.CommandName = data;
             var serialConversation = JsonConvert.SerializeObject(conversation);
-            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
+            db.StringSet(id.ToString(), serialConversation);
         }
     }
 

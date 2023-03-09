@@ -28,15 +28,17 @@ public class ProductRepo : IProductRepo
         var redisConveration = db.StringGet(update.Message.Chat.Id.ToString());
         var conversation = JsonConvert.DeserializeObject<ConversationData>(redisConveration);
 
-        var mealType = conversation?.MealType switch
+        MealType? mealType = conversation?.MealType switch
         {
             "Breakfast" => MealType.Breakfast,
             "Dinner" => MealType.Dinner,
             "Lunch" => MealType.Lunch,
-            "Snack" => MealType.Snack
+            "Snack" => MealType.Snack,
+            _ => null
         };
-        var mealData = await _mealDataRepo.GetMealData(update, mealType);
-        
+        var mealData = new MealData();
+        if (mealType != null) mealData = await _mealDataRepo.GetMealData(update, mealType);
+
         var product = await _context.Products.FirstOrDefaultAsync(
         x => update.Message != null && x.Name == update.Message.Text);
 
@@ -56,7 +58,7 @@ public class ProductRepo : IProductRepo
 
         var result = await _context.Products.AddAsync(newProduct);
         await _context.SaveChangesAsync();
-        await _mealDataRepo.AddNewProduct(newProduct, update);
+        if (mealType != null) await _mealDataRepo.AddNewProduct(newProduct, update);
 
         return result.Entity;
     }

@@ -51,7 +51,7 @@ public class MealDataRepo : IMealDataRepo
         return result.Entity;
     }
 
-    public async Task<MealData?> GetMealData(Update? update, MealType mealType)
+    public async Task<MealData?> GetMealData(Update update, MealType? mealType)
     {
         var messageDate = update?.Message?.Date.ToString("dd.MM.yyyy");
         var dayTotalData = await _context.DayTotalData.FirstOrDefaultAsync(x =>

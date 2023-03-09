@@ -37,9 +37,9 @@ public class EnterManuallyCommand : ICommand
             var conversation = _conversationRepo.GetConversationData(message.Chat.Id)!;
             if (conversation is null) _conversationRepo.CreateConversation(update);
             
-            if (conversation?.CommandName is null && conversation?.CommandName is Commands.CreateRecipeCommand)
+            if (conversation?.CommandName is null || conversation?.CommandName is Commands.CreateRecipeCommand)
             {
-                _conversationRepo.AddCommandName(update);
+                _conversationRepo.AddCommandName(Commands.AddIngredientCommand, message.Chat.Id);
             }
 
             long? productId = 0;
@@ -185,16 +185,24 @@ public class EnterManuallyCommand : ICommand
                     
                     if (conversation.CommandName is Commands.AddIngredientCommand)
                     {
-                        conversation.CommandName = Commands.CreateRecipeCommand;
+                        //conversation.CommandName = Commands.CreateRecipeCommand;
+                        await client.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Successfully added!");
+                        await client.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Do you want to add one more?",
+                            replyMarkup: InlineKeyboards.AddIngredientFinishInlineKeyboard);
                     } else if (conversation.CommandName is Commands.EnterManuallyCommand)
                     {
                         _conversationRepo.DeleteConversation(conversation);
+                        await client.SendTextMessageAsync(
+                            chatId: message.Chat.Id,
+                            text: "Successfully added!",
+                            replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
                     }
                     
-                    await client.SendTextMessageAsync(
-                        chatId: message.Chat.Id,
-                        text: "Successfully added!",
-                        replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
+                    
                     break;
             }
         }
