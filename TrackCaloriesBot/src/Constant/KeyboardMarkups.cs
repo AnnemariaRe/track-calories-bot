@@ -65,5 +65,7 @@ public static class KeyboardMarkups
     public static ReplyKeyboardMarkup GreatKeyboardMarkup = new(new[]
     {
         new KeyboardButton[] { "Great!" },
-    });
+    }){
+        ResizeKeyboard = true
+    };
 }

@@ -13,12 +13,14 @@ public class EnterManuallyCommand : ICommand
     private readonly IUserRepo _userRepo;
     private readonly IConversationDataRepo _conversationRepo;
     private readonly IProductRepo _productRepo;
+    private readonly IRecipeRepo _recipeRepo;
     
-    public EnterManuallyCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo, IProductRepo productRepo)
+    public EnterManuallyCommand(IUserRepo userRepo, IConversationDataRepo conversationRepo, IProductRepo productRepo, IRecipeRepo recipeRepo)
     {
         _userRepo = userRepo;
         _conversationRepo = conversationRepo;
         _productRepo = productRepo;
+        _recipeRepo = recipeRepo;
     }
     public async Task Execute(Update? update, ITelegramBotClient client)
     {
@@ -51,9 +53,7 @@ public class EnterManuallyCommand : ICommand
             switch (conversation.ConversationStage)
             {
                 case 0:
-                    _conversationRepo.IncrementStage(message.Chat.Id);
-                    _conversationRepo.IncrementStage(message.Chat.Id);
-                    _conversationRepo.IncrementStage(message.Chat.Id);
+                    _conversationRepo.IncrementStageBy(message.Chat.Id, 3);
                     goto case 3;
                 case 3:
                     _conversationRepo.IncrementStage(message.Chat.Id);
@@ -74,7 +74,7 @@ public class EnterManuallyCommand : ICommand
                         replyMarkup: InlineKeyboards.ServingTypeInlineKeyboard);
                     break;
                 case 5:
-                    _productRepo.AddServingUnit(message.Text, productId);
+                    await _productRepo.AddServingUnit(update.CallbackQuery?.Data, productId);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
@@ -177,7 +177,7 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 13:
                     await _productRepo.AddQuantity(message.Text, productId);
-                    if (_productRepo.GetProduct(productId)!.Result.Quantity < 0)
+                    if (_productRepo.GetProduct(productId).Result.Quantity < 0)
                     {
                         await WrongAnswerMessage(message.Chat.Id, client);
                         break;
@@ -185,7 +185,11 @@ public class EnterManuallyCommand : ICommand
                     
                     if (conversation.CommandName is Commands.AddIngredientCommand)
                     {
-                        //conversation.CommandName = Commands.CreateRecipeCommand;
+                        var ingredient = _productRepo.GetProduct(productId).Result;
+                        await _recipeRepo.AddProduct(ingredient, conversation.RecipeId);
+                        _conversationRepo.AddCommandName(Commands.CreateRecipeCommand, message.Chat.Id);
+                        _conversationRepo.DecrementStageBy(message.Chat.Id, 10);
+                        
                         await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: "Successfully added!");
@@ -201,8 +205,6 @@ public class EnterManuallyCommand : ICommand
                             text: "Successfully added!",
                             replyMarkup: KeyboardMarkups.MenuKeyboardMarkup);
                     }
-                    
-                    
                     break;
             }
         }

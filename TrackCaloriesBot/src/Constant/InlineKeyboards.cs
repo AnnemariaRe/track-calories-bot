@@ -13,8 +13,8 @@ public static class InlineKeyboards
     {
         new[]
         {
-            InlineKeyboardButton.WithCallbackData("grams", "Grams"),
-            InlineKeyboardButton.WithCallbackData("milliliters", "Milliliters")
+            InlineKeyboardButton.WithCallbackData("grams", "g"),
+            InlineKeyboardButton.WithCallbackData("milliliters", "ml")
         },
     });
     public static InlineKeyboardMarkup AddIngredientInlineKeyboard = new InlineKeyboardMarkup(new[]
@@ -23,11 +23,8 @@ public static class InlineKeyboards
     });
     public static InlineKeyboardMarkup AddIngredientFinishInlineKeyboard = new InlineKeyboardMarkup(new[]
     {
-        new[]
-        {
-            InlineKeyboardButton.WithCallbackData("Add ingredient", "Add ingredient"),
-            InlineKeyboardButton.WithCallbackData("Finish", "/finish")
-        },
+        new[] { InlineKeyboardButton.WithCallbackData("Add ingredient", "/Add ingredient"), },
+        new[] { InlineKeyboardButton.WithCallbackData("Finish", "/finish") }
     });
     public static InlineKeyboardMarkup YesOrNoInlineKeyboard = new InlineKeyboardMarkup(new[]
     {
