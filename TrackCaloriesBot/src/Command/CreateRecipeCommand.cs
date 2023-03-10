@@ -129,6 +129,9 @@ public class CreateRecipeCommand : ICommand
                     goto case 8;
                 case 8:
                     var recipeInfo = _recipeRepo.GetRecipe(recipeId).Result;
+                    await _recipeRepo.AddAllCalories(recipeId);
+                    await _recipeRepo.AddPFC(recipeId);
+                    await _recipeRepo.AddWeightPerServing(recipeId);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(

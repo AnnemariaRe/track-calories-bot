@@ -70,51 +70,43 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddCalorieAmount(string? message, long? id)
+    public async Task AddAllCalories(long? id)
     {
-        var recipe = GetRecipe(id);
-        if (recipe?.Result is not null)
+        var recipe = GetRecipe(id).Result;
+        if (recipe is not null && recipe.Products is not null)
         {
-            if (double.TryParse(message, out var x)) { 
-                recipe.Result.BaseCalories = x;
-                await _context.SaveChangesAsync();
+            double totalCalories = 0;
+            double totalWeight = 0;
+            foreach (var product in recipe.Products)
+            {
+                totalCalories += product.BaseCalories / 100 * product.ServingAmount * product.Quantity;
+                totalWeight += product.ServingAmount * product.Quantity;
             }
+            recipe.BaseCalories = totalCalories / totalWeight * (totalWeight / recipe.ServingsNumber);
+            await _context.SaveChangesAsync();
         }
     }
 
-    public async Task AddProtein(string? message, long? id)
+    public async Task AddPFC(long? id)
     {
-        var recipe = GetRecipe(id);
-        if (recipe?.Result is not null)
+        var recipe = GetRecipe(id).Result;
+        if (recipe is not null && recipe.Products is not null)
         {
-            if (double.TryParse(message, out var x)) { 
-                recipe.Result.BaseProtein = x;
-                await _context.SaveChangesAsync();
+            double protein = 0;
+            double fat = 0;
+            double carbs = 0;
+            double totalWeight = 0;
+            foreach (var product in recipe.Products)
+            {
+                protein += product.BaseProtein / 100 * product.ServingAmount * product.Quantity;
+                fat += product.BaseFat / 100 * product.ServingAmount * product.Quantity;
+                carbs += product.BaseCarbs / 100 * product.ServingAmount * product.Quantity;
+                totalWeight += product.ServingAmount * product.Quantity;
             }
-        }
-    }
-
-    public async Task AddFat(string? message, long? id)
-    {
-        var recipe = GetRecipe(id);
-        if (recipe?.Result is not null)
-        {
-            if (double.TryParse(message, out var x)) { 
-                recipe.Result.BaseFat = x;
-                await _context.SaveChangesAsync();
-            }
-        }
-    }
-
-    public async Task AddCarbs(string? message, long? id)
-    {
-        var recipe = GetRecipe(id);
-        if (recipe?.Result is not null)
-        {
-            if (double.TryParse(message, out var x)) { 
-                recipe.Result.BaseCarbs = x;
-                await _context.SaveChangesAsync();
-            }
+            recipe.BaseProtein = protein / totalWeight * (totalWeight / recipe.ServingsNumber);
+            recipe.BaseFat = fat / totalWeight * (totalWeight / recipe.ServingsNumber);
+            recipe.BaseCarbs = carbs / totalWeight * (totalWeight / recipe.ServingsNumber);
+            await _context.SaveChangesAsync();
         }
     }
 
@@ -131,16 +123,19 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddWeightPerServing(string? message, long? id)
+    public async Task AddWeightPerServing(long? id)
     {
-        var recipe = GetRecipe(id);
-        if (recipe?.Result is not null)
+        var recipe = GetRecipe(id).Result;
+        if (recipe is not null && recipe.Products is not null)
         {
-            if (message.Contains('.')) message.Remove(message.IndexOf('.'));
-            if (int.TryParse(message, out var x)) { 
-                recipe.Result.WeightPerServing = x;
-                await _context.SaveChangesAsync();
+            double totalWeight = 0;
+            foreach (var product in recipe.Products)
+            {
+                totalWeight += product.ServingAmount * product.Quantity;
             }
+
+            recipe.WeightPerServing = totalWeight / recipe.ServingsNumber;
+            await _context.SaveChangesAsync();
         }
     }
 
