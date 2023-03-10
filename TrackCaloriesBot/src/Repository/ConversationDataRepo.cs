@@ -61,6 +61,18 @@ public class ConversationDataRepo : IConversationDataRepo
         }
     }
     
+    public void IncrementStageBy(long id, int amount)
+    {
+        var db = _redis.GetDatabase();
+        var conversation = GetConversationData(id);
+        if (conversation is not null && amount > 0)
+        {
+            conversation.ConversationStage += amount;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(id.ToString(), serialConversation);
+        }
+    }
+    
     public void DecrementStage(long id)
     {
         var db = _redis.GetDatabase();
@@ -68,6 +80,18 @@ public class ConversationDataRepo : IConversationDataRepo
         if (conversation is not null)
         {
             conversation.ConversationStage--;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(id.ToString(), serialConversation);
+        }
+    }
+    
+    public void DecrementStageBy(long id, int amount)
+    {
+        var db = _redis.GetDatabase();
+        var conversation = GetConversationData(id);
+        if (conversation is not null && amount > 0 && amount <= conversation.ConversationStage)
+        {
+            conversation.ConversationStage -= amount;
             var serialConversation = JsonConvert.SerializeObject(conversation);
             db.StringSet(id.ToString(), serialConversation);
         }
