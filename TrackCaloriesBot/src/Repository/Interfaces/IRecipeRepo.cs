@@ -16,5 +16,6 @@ public interface IRecipeRepo
     public Task AddProducts(ICollection<Product>? products, long? id);
     public Task AddDescription(string? message, long? id);
     public Task CreateRecipeFromResponse(ResponseRecipe? response, long id);
+    public Task<ICollection<Recipe>?> GetAllRecipes(long? id);
     public Task DeleteRecipe(long? id);
 }

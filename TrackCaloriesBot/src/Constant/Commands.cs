@@ -16,6 +16,7 @@ public static class Commands
     public const string AddWaterCommand = "Water";
     public const string RecipesCommand = "Recipes";
     public const string SearchRecipesCommand = "Search new recipes";
+    public const string ShowMyRecipesCommand = "Show my recipes";
     public const string CreateRecipeCommand = "Create my own recipe";
     public const string AddIngredientCommand = "Add ingredient";
     public const string BackCommand = "Back";

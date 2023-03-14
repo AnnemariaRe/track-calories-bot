@@ -28,6 +28,7 @@ public class RecipeRepo : IRecipeRepo
         var newRecipe = new Recipe()
         {
             Id = Guid.NewGuid().GetHashCode(),
+            UserId = update.Message.Chat.Id,
             Name = update.Message?.Text,
             Image = null,
             SourceUrl = null,
@@ -203,6 +204,7 @@ public class RecipeRepo : IRecipeRepo
         var newRecipe = new Recipe()
         {
             Id = Guid.NewGuid().GetHashCode(),
+            UserId = id,
             ApiId = response.Id,
             Name = response.Title,
             Image = response.Image,
@@ -223,10 +225,18 @@ public class RecipeRepo : IRecipeRepo
         
         await _context.SaveChangesAsync();
     }
+    
+    public async Task<ICollection<Recipe>?> GetAllRecipes(long? id)
+    {
+        var user = _context.Recipes.Where(x => x.UserId == id).ToList();
+        if (user is null) throw new NullBotException("User entity is not found.");
+
+        return user;
+    }
 
     public async Task DeleteRecipe(long? id)
     {
-        var recipe = await GetRecipe(id)!;
+        var recipe = await GetRecipe(id);
         _context.Recipes.Remove(recipe!);
         await _context.SaveChangesAsync();
     }

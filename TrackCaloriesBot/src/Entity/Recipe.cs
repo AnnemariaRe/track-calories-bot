@@ -10,6 +10,7 @@ public class Recipe
 
     [Key] public int Id { get; set; }
     public int? ApiId { get; set; }
+    public long UserId { get; set; }
     public string? Name { get; set; }
     public string? Image { get; set; }
     public string? SourceUrl { get; set; }

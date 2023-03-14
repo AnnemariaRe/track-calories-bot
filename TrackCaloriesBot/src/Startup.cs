@@ -59,6 +59,7 @@ public class Startup
         services.AddSingleton<ICommand, RecipesMenuCommand>();
         services.AddSingleton<ICommand, SearchRecipesCommand>();
         services.AddSingleton<ICommand, CreateRecipeCommand>();
+        services.AddSingleton<ICommand, ShowMyRecipesCommand>();
         
         var culture = new CultureInfo("en-US");
         CultureInfo.DefaultThreadCurrentCulture = culture;

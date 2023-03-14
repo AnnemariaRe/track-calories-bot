@@ -101,6 +101,9 @@ public class CommandService : ICommandService
             case "Breakfast" or "Lunch" or "Dinner" or "Snack":
                 await ExecuteCommand(Commands.AddProductToMealCommand, id, update, client);
                 return;
+            case Commands.ShowMyRecipesCommand:
+                await ExecuteCommand(Commands.ShowMyRecipesCommand, id, update, client);
+                return;
         }
 
         var lastCommand = _commandRepo.GetLastCommand(id.ToString());
@@ -138,6 +141,9 @@ public class CommandService : ICommandService
                 return;
             case Commands.CreateRecipeCommand:
                 await ExecuteCommand(Commands.CreateRecipeCommand, id, update, client);
+                return;
+            case Commands.ShowMyRecipesCommand:
+                await ExecuteCommand(Commands.ShowMyRecipesCommand, id, update, client);
                 return;
         }
     }
