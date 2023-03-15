@@ -49,7 +49,7 @@ public class RecipeRepo : IRecipeRepo
         return result.Entity;
     }
 
-    public async Task<Recipe?> GetRecipe(long? id)
+    public async Task<Recipe?> GetRecipe(int? id)
     {
         var recipe = await _context.Recipes.FirstOrDefaultAsync(x => x.Id == id);
         if (recipe is null)
@@ -59,7 +59,7 @@ public class RecipeRepo : IRecipeRepo
         return recipe;
     }
 
-    public async Task AddServingsNumber(string? message, long? id)
+    public async Task AddServingsNumber(string? message, int? id)
     {
         var recipe = GetRecipe(id);
         if (recipe?.Result is not null)
@@ -71,7 +71,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddAllCalories(long? id)
+    public async Task AddAllCalories(int? id)
     {
         var recipe = GetRecipe(id).Result;
         if (recipe is not null && recipe.Products is not null)
@@ -88,7 +88,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddPFC(long? id)
+    public async Task AddPFC(int? id)
     {
         var recipe = GetRecipe(id).Result;
         if (recipe is not null && recipe.Products is not null)
@@ -111,7 +111,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddReadyInMinutes(string? message, long? id)
+    public async Task AddReadyInMinutes(string? message, int? id)
     {
         var recipe = GetRecipe(id);
         if (recipe?.Result is not null)
@@ -124,7 +124,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddWeightPerServing(long? id)
+    public async Task AddWeightPerServing(int? id)
     {
         var recipe = GetRecipe(id).Result;
         if (recipe is not null && recipe.Products is not null)
@@ -140,7 +140,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddProduct(Product? product, long? id)
+    public async Task AddProduct(Product? product, int? id)
     {
         var recipe = GetRecipe(id);
         if (recipe?.Result is not null && product is not null)
@@ -153,7 +153,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
 
-    public async Task AddProducts(ICollection<Product>? products, long? id)
+    public async Task AddProducts(ICollection<Product>? products, int? id)
     {
         if (products is not null)
         {
@@ -164,7 +164,7 @@ public class RecipeRepo : IRecipeRepo
         }
     }
     
-    public async Task AddDescription(string? message, long? id)
+    public async Task AddDescription(string? message, int? id)
     {
         var recipe = GetRecipe(id);
         if (recipe?.Result is not null)
@@ -234,7 +234,7 @@ public class RecipeRepo : IRecipeRepo
         return user;
     }
 
-    public async Task DeleteRecipe(long? id)
+    public async Task DeleteRecipe(int? id)
     {
         var recipe = await GetRecipe(id);
         _context.Recipes.Remove(recipe!);

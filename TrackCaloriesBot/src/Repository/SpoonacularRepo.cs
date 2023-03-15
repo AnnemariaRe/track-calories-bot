@@ -68,29 +68,30 @@ public class SpoonacularRepo : ISpoonacularRepo
     {
         var recipes = new List<ResponseItem>();
         
-        var url = "https://api.spoonacular.com/recipes/complexSearch?";
+        var url = "https://api.spoonacular.com/recipes/complexSearch";
         var parameters =
             $"?apiKey={Keys.SpoonacularApiKey}&number=10&query={query}";
 
         if (request?.Equipments is not null)
         {
-            parameters += $"&equipment={request.Equipments}";
+            parameters += $"&equipment={request?.Equipments}";
         }
         if (request?.Ingredients is not null)
         {
-            parameters += $"&includeIngredients={request.Ingredients}";
+            parameters += $"&includeIngredients={request?.Ingredients}";
         }
         if (request?.MaxReadyTime is not null)
         {
-            parameters += $"&maxReadyTime={request.MaxReadyTime}";
+            parameters += $"&maxReadyTime={request?.MaxReadyTime}";
         }
         
         var client = new HttpClient();
         client.BaseAddress = new Uri(url);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await client.GetAsync(parameters).ConfigureAwait(false);  
-       
+        HttpResponseMessage response = null;
+        response = await client.GetAsync(parameters).ConfigureAwait(false);
+
         if (response.IsSuccessStatusCode)
         {
             var jsonString = await response.Content.ReadAsStringAsync();

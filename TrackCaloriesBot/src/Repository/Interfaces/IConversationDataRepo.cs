@@ -14,5 +14,6 @@ public interface IConversationDataRepo
     public void AddCommandName(string? data, long id);
     public void AddItemId(Update update, int id);
     public void AddRecipeId(Update update, int id);
+    public void AddLastMessageId(Update update, int id);
     public void DeleteConversation(ConversationData conversation);
 }

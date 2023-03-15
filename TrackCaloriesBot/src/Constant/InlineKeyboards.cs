@@ -53,5 +53,10 @@ public static class InlineKeyboards
     {
         new[] { InlineKeyboardButton.WithCallbackData("Skip", "/skip") },
     });
+    public static InlineKeyboardMarkup RecipeInfoInlineKeyboard = new InlineKeyboardMarkup(new[]
+    {
+        new[] { InlineKeyboardButton.WithCallbackData("Delete recipe", "Delete recipe"), },
+        new[] { InlineKeyboardButton.WithCallbackData("Back to all", "Back to all") }
+    });
 
 }

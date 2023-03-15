@@ -43,9 +43,9 @@ public class SearchInlineQueryCommand : ICommand
             
             if (conversation is { CommandName: Commands.SearchRecipesCommand, ConversationStage: 4 })
             {
-                var recipeResult = _spoonacularRepo.GetRecipes(_requestRepo.GetRequest(update.InlineQuery.From.Id), update.InlineQuery.Query);
+                var recipeResult = _spoonacularRepo.GetRecipes(_requestRepo.GetRequest(update.InlineQuery.From.Id), update.InlineQuery.Query).Result;
 
-                var results = recipeResult.Result.Select(recipe => new InlineQueryResultArticle(
+                var results = recipeResult.Select(recipe => new InlineQueryResultArticle(
                         recipe.Title.GetHashCode().ToString(), recipe.Title,
                         new InputTextMessageContent($"{recipe.Id}")) { ThumbUrl = recipe.Image })
                         .Cast<InlineQueryResult>().ToList();

@@ -32,6 +32,7 @@ public class ConversationDataRepo : IConversationDataRepo
             MealType = update.Message.Text,
             ItemId = 0,
             RecipeId = 0,
+            LastMessageId = 0,
             ConversationStage = 0
         };
         
@@ -113,13 +114,27 @@ public class ConversationDataRepo : IConversationDataRepo
     
     public void AddRecipeId(Update update, int id)
     {
-        if (update.Message?.Text == null) return;
+        if (update.Message == null) return;
         
         var db = _redis.GetDatabase();
         var conversation = GetConversationData(update.Message.Chat.Id);
         if (conversation is not null)
         {
             conversation.RecipeId = id;
+            var serialConversation = JsonConvert.SerializeObject(conversation);
+            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
+        }
+    }
+
+    public void AddLastMessageId(Update update, int id)
+    {
+        if (update.Message?.Text == null) return;
+        
+        var db = _redis.GetDatabase();
+        var conversation = GetConversationData(update.Message.Chat.Id);
+        if (conversation is not null)
+        {
+            conversation.LastMessageId = id;
             var serialConversation = JsonConvert.SerializeObject(conversation);
             db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
         }
