@@ -56,6 +56,8 @@ public class CreateRecipeCommand : ICommand
             
             if (conversation?.CommandName is null) _conversationRepo.AddCommandName(text, message.Chat.Id);
 
+            var messageId = conversation.LastMessageId;
+            var sentMessage = new Message();
             var recipeId = 0;
             if (conversation?.RecipeId != null) recipeId = conversation.RecipeId;
 
@@ -83,10 +85,11 @@ public class CreateRecipeCommand : ICommand
                     await _recipeRepo.AddServingsNumber(text, recipeId);
                     _conversationRepo.IncrementStage(message.Chat.Id);
 
-                    await client.SendTextMessageAsync(
+                    sentMessage = await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Write included ingredients",
                         replyMarkup: InlineKeyboards.AddIngredientInlineKeyboard);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                     break;
                 case 3:
                     if (text is "/finish")
@@ -97,7 +100,8 @@ public class CreateRecipeCommand : ICommand
                     break;
                 case 4:
                     _conversationRepo.IncrementStage(message.Chat.Id);
-                    await client.SendTextMessageAsync(
+                    await client.EditMessageTextAsync(
+                        messageId: messageId,
                         chatId: message.Chat.Id,
                         text: "How long it takes to prepare? (in minutes)");
                     break;
@@ -105,16 +109,18 @@ public class CreateRecipeCommand : ICommand
                     await _recipeRepo.AddReadyInMinutes(text, recipeId);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
-                    await client.SendTextMessageAsync(
+                    sentMessage = await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Do you want to add a recipe description?",
                         replyMarkup: InlineKeyboards.YesOrNoInlineKeyboard);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                     break;
                 case 6:
                     if (text is "yes")
                     {
                         _conversationRepo.IncrementStage(message.Chat.Id);
-                        await client.SendTextMessageAsync(
+                        await client.EditMessageTextAsync(
+                            messageId: messageId,
                             chatId: message.Chat.Id,
                             text: "Write a description");
                     } else if (text is "no")

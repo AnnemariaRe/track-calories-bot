@@ -44,6 +44,8 @@ public class EnterManuallyCommand : ICommand
                 _conversationRepo.AddCommandName(Commands.AddIngredientCommand, message.Chat.Id);
             }
 
+            var messageId = conversation!.LastMessageId;
+            var sentMessage = new Message();
             long? productId = 0;
             if (conversation.ItemId != null)
             {
@@ -58,6 +60,15 @@ public class EnterManuallyCommand : ICommand
                 case 3:
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
+                    if (_conversationRepo.GetConversationData(message.Chat.Id)?.CommandName is Commands.AddIngredientCommand)
+                    {
+                        await client.EditMessageTextAsync(
+                            messageId: messageId,
+                            chatId: message.Chat.Id,
+                            text: "Write ingredient name");
+                        break;
+                    }
+                    
                     await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Write product name",
@@ -68,19 +79,20 @@ public class EnterManuallyCommand : ICommand
                     _conversationRepo.AddItemId(message.Chat.Id, product.Id);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
-                    await client.SendTextMessageAsync(
+                    sentMessage = await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Choose serving unit",
                         replyMarkup: InlineKeyboards.ServingTypeInlineKeyboard);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                     break;
                 case 5:
                     await _productRepo.AddServingUnit(update.CallbackQuery?.Data, productId);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
-                    await client.SendTextMessageAsync(
+                    await client.EditMessageTextAsync(
+                        messageId: messageId,
                         chatId: message.Chat.Id,
-                        text: "Write serving amount",
-                        replyMarkup: new ReplyKeyboardRemove());
+                        text: "Write serving amount");
                     break;
                 case 6:
                     await _productRepo.AddServingAmount(message.Text, productId);
@@ -105,19 +117,20 @@ public class EnterManuallyCommand : ICommand
                     }
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
-                    await client.SendTextMessageAsync(
+                    sentMessage = await client.SendTextMessageAsync(
                         chatId: message.Chat.Id,
                         text: "Do you want to add PFC info?",
                         replyMarkup: InlineKeyboards.YesOrNoInlineKeyboard);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                     break;
                 case 8:
                     if (update.CallbackQuery?.Data is "yes")
                     {
                         _conversationRepo.IncrementStage(message.Chat.Id);
-                        await client.SendTextMessageAsync(
+                        await client.EditMessageTextAsync(
+                            messageId: messageId,
                             chatId: message.Chat.Id,
-                            text: "Write protein amount (per 100 grams)",
-                            replyMarkup: new ReplyKeyboardRemove());
+                            text: "Write protein amount (per 100 grams)");
                         break;
                     }
                     if (update.CallbackQuery?.Data is "no")
@@ -193,10 +206,12 @@ public class EnterManuallyCommand : ICommand
                         await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: "Successfully added!");
-                        await client.SendTextMessageAsync(
+                        sentMessage = await client.SendTextMessageAsync(
                             chatId: message.Chat.Id,
                             text: "Do you want to add one more?",
                             replyMarkup: InlineKeyboards.AddIngredientFinishInlineKeyboard);
+                        
+                        _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                     } else if (conversation.CommandName is Commands.EnterManuallyCommand)
                     {
                         _conversationRepo.DeleteConversation(conversation);
