@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
@@ -18,7 +19,7 @@ public class RecipeRepo : IRecipeRepo
         _userRepo = userRepo;
     }
 
-    public async Task<Recipe> CreateRecipe(Update update)
+    public async Task<Recipe?> CreateRecipe(Update update)
     {
         var recipe = await _context.Recipes.FirstOrDefaultAsync(
             x => update.Message != null && x.Name == update.Message.Text && x.Id == update.Message.Chat.Id);
@@ -237,7 +238,9 @@ public class RecipeRepo : IRecipeRepo
     public async Task DeleteRecipe(int? id)
     {
         var recipe = await GetRecipe(id);
-        _context.Recipes.Remove(recipe!);
+        if (recipe != null)
+            _context.Recipes.Remove(_context.Recipes.Include(p => p.Products).FirstOrDefault(x => x.Id == id));
         await _context.SaveChangesAsync();
-    }
+
+        }
 }

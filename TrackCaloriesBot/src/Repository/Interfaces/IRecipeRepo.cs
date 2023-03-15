@@ -5,7 +5,7 @@ namespace TrackCaloriesBot.Repository.Interfaces;
 
 public interface IRecipeRepo
 {
-    public Task<Recipe> CreateRecipe(Update update);
+    public Task<Recipe?> CreateRecipe(Update update);
     public Task<Recipe?> GetRecipe(int? id);
     public Task AddServingsNumber(string? message, int? id);
     public Task AddAllCalories(int? id);
