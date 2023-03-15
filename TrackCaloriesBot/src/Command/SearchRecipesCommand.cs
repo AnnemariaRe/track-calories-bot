@@ -120,7 +120,7 @@ public class SearchRecipesCommand : ICommand
                         _conversationRepo.IncrementStage(message.Chat.Id);
 
                         var recipe = _spoonacularRepo.GetRecipeInfo(x).Result;
-                        _conversationRepo.AddItemId(update, x);
+                        _conversationRepo.AddItemId(message.Chat.Id, x);
 
                         var textMessage = $"<b>{recipe?.Title}</b> \n \n" +
                                           $"<pre>Calories per serving: {recipe?.Nutrition.Nutrients.FirstOrDefault(i => i.Name == "Calories")?.Amount} \n" +

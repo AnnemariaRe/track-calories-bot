@@ -98,45 +98,45 @@ public class ConversationDataRepo : IConversationDataRepo
         }
     }
     
-    public void AddItemId(Update update, int id)
+    public void AddItemId(long chatId, int id)
     {
-        if (update.Message?.Text == null) return;
+        if (chatId == 0) return;
         
         var db = _redis.GetDatabase();
-        var conversation = GetConversationData(update.Message.Chat.Id);
+        var conversation = GetConversationData(chatId);
         if (conversation is not null)
         {
             conversation.ItemId = id;
             var serialConversation = JsonConvert.SerializeObject(conversation);
-            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
+            db.StringSet(chatId.ToString(), serialConversation);
         }
     }
     
-    public void AddRecipeId(Update update, int id)
+    public void AddRecipeId(long chatId, int id)
     {
-        if (update.Message == null) return;
+        if (chatId == 0) return;
         
         var db = _redis.GetDatabase();
-        var conversation = GetConversationData(update.Message.Chat.Id);
+        var conversation = GetConversationData(chatId);
         if (conversation is not null)
         {
             conversation.RecipeId = id;
             var serialConversation = JsonConvert.SerializeObject(conversation);
-            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
+            db.StringSet(chatId.ToString(), serialConversation);
         }
     }
 
-    public void AddLastMessageId(Update update, int id)
+    public void AddLastMessageId(long chatId, int id)
     {
-        if (update.Message?.Text == null) return;
+        if (chatId == 0) return;
         
         var db = _redis.GetDatabase();
-        var conversation = GetConversationData(update.Message.Chat.Id);
+        var conversation = GetConversationData(chatId);
         if (conversation is not null)
         {
             conversation.LastMessageId = id;
             var serialConversation = JsonConvert.SerializeObject(conversation);
-            db.StringSet(update.Message.Chat.Id.ToString(), serialConversation);
+            db.StringSet(chatId.ToString(), serialConversation);
         }
     }
 

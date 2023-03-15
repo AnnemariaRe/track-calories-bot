@@ -65,7 +65,7 @@ public class ShowMyRecipesCommand : ICommand
                         chatId: message.Chat.Id,
                         text: "Click for more information",
                         replyMarkup: GetRecipesInlineKeyboard(message.Chat.Id));
-                    _conversationRepo.AddLastMessageId(update, sentMessage.MessageId);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                 }
             }
             else if (int.TryParse(text, out var x))
@@ -88,8 +88,8 @@ public class ShowMyRecipesCommand : ICommand
                         text: RecipeInfoOutput(recipe),
                         replyMarkup: recipeKeyboard,
                         parseMode: ParseMode.Html);
-                    _conversationRepo.AddLastMessageId(update, sentMessage.MessageId);
-                    _conversationRepo.AddRecipeId(update, x);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
+                    _conversationRepo.AddRecipeId(message.Chat.Id, x);
                 }
             }
             else if (text == "Delete recipe")
@@ -109,7 +109,7 @@ public class ShowMyRecipesCommand : ICommand
                         text: "Click for more information",
                         messageId: messageId,
                         replyMarkup: GetRecipesInlineKeyboard(message.Chat.Id));
-                    _conversationRepo.AddLastMessageId(update, sentMessage.MessageId);
+                    _conversationRepo.AddLastMessageId(message.Chat.Id, sentMessage.MessageId);
                 }
             }
         }

@@ -71,7 +71,7 @@ public class CreateRecipeCommand : ICommand
                     break;
                 case 1:
                     var recipe = await _recipeRepo.CreateRecipe(update);
-                    _conversationRepo.AddRecipeId(update, recipe.Id); 
+                    _conversationRepo.AddRecipeId(message.Chat.Id, recipe.Id); 
                     _conversationRepo.IncrementStage(message.Chat.Id);
 
                     await client.SendTextMessageAsync(

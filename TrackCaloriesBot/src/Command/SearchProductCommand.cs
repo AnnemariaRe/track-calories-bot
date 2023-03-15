@@ -86,7 +86,7 @@ public class SearchProductCommand : ICommand
                     {
                         var id1 = _conversationRepo.GetConversationData(message.Chat.Id)!.ItemId;
                         await _productRepo.DeleteProduct(id1);
-                        _conversationRepo.AddItemId(update, 0);
+                        _conversationRepo.AddItemId(message.Chat.Id, 0);
                         _conversationRepo.DecrementStage(message.Chat.Id);
                         goto case 0;
                     }
@@ -95,7 +95,7 @@ public class SearchProductCommand : ICommand
                         var newProduct = await _productRepo.CreateProduct(update);
                         var productResult = _spoonacularRepo.GetProductInfo(x).Result;
 
-                        _conversationRepo.AddItemId(update, newProduct.Id);
+                        _conversationRepo.AddItemId(message.Chat.Id, newProduct.Id);
                         await _productRepo.AddProductInfoFromResponse(productResult, newProduct.Id);
                         var product = await _productRepo.GetProduct(newProduct.Id)!;
 

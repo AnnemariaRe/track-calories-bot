@@ -65,7 +65,7 @@ public class EnterManuallyCommand : ICommand
                     break;
                 case 4:
                     var product = await _productRepo.CreateProduct(update);
-                    _conversationRepo.AddItemId(update, product.Id);
+                    _conversationRepo.AddItemId(message.Chat.Id, product.Id);
                     _conversationRepo.IncrementStage(message.Chat.Id);
                     
                     await client.SendTextMessageAsync(
