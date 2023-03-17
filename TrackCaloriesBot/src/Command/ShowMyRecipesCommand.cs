@@ -121,16 +121,16 @@ public class ShowMyRecipesCommand : ICommand
         double totalCalories = 0;
         double totalWeight = 0;
         
-        if (recipe.Products != null)
+        output += "Ingredients: \n";
+        foreach (var product in recipe.Products)
         {
-            output += "Ingredients: \n";
-            foreach (var product in recipe.Products)
-            {
-                output += $"- {product.Quantity} x {product.ServingAmount} {product.ServingType} {product.Name} \n";
-                totalCalories += product.BaseCalories * product.Quantity;
-                totalWeight += product.ServingAmount * product.Quantity;
-            }
-            
+            output += $"- {product.Quantity} x {product.ServingAmount} {product.ServingType} {product.Name} \n";
+            totalCalories += product.BaseCalories * product.Quantity;
+            totalWeight += product.ServingAmount * product.Quantity;
+        }
+        
+        if (recipe.ApiId is null)
+        {
             output += $"Servings: {recipe.ServingsNumber}\n" +
                       $"Calories per serving: {(totalCalories / totalWeight * (totalWeight / recipe.ServingsNumber)):0.00}\n" +
                       $"Weight per serving: {(totalWeight / recipe.ServingsNumber):0} g</pre>";

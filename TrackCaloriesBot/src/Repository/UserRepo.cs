@@ -3,7 +3,6 @@ using Telegram.Bot.Types;
 using TrackCaloriesBot.Context;
 using TrackCaloriesBot.Entity;
 using TrackCaloriesBot.Enums;
-using TrackCaloriesBot.Exceptions;
 using TrackCaloriesBot.Repository.Interfaces;
 using User = TrackCaloriesBot.Entity.User;
 

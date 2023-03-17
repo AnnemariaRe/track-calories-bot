@@ -52,7 +52,7 @@ public class RecipeRepo : IRecipeRepo
 
     public async Task<Recipe?> GetRecipe(int? id)
     {
-        var recipe = await _context.Recipes.FirstOrDefaultAsync(x => x.Id == id);
+        var recipe = await _context.Recipes.Include(x => x.Products).FirstOrDefaultAsync(x => x.Id == id);
         if (recipe is null)
         {
             throw new NullBotException("Recipe entity is not found.");
